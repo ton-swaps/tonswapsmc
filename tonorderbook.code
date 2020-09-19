@@ -1,0 +1,10313 @@
+.globl	constructor
+.public	constructor
+.type	constructor, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7_with_init_storage$
+}
+IF
+;; constructor protection
+GETGLOB 6
+THROWIF 51
+PUSHINT 1
+SETGLOB 6
+;; end constructor protection
+; Decode input parameters
+; Decode ethSmcAddress
+LDU 256
+; Decode ethTokenSmcAddress
+LDUQ 256
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 256
+}
+IFNOT
+ENDS
+;; param: ethSmcAddress
+;; param: ethTokenSmcAddress
+; constructor TonSwapOrderbook
+ACCEPT
+; expValue
+; end expValue
+;; push identifier ethSmcAddress
+PUSH S1
+; colValue
+SETGLOB 11
+; end colValue
+; expValue
+; end expValue
+;; push identifier ethTokenSmcAddress
+DUP
+; colValue
+SETGLOB 12
+; end colValue
+; for
+PUSHINT 0
+;; decl: i
+PUSHCONT {
+	;; push identifier i
+	DUP
+	LESSINT 3
+}
+PUSHCONT {
+	; expValue
+	;; fetch swapDirectDB
+	GETGLOB 13
+	; end expValue
+	NEWDICT
+	TUPLE 1
+	;; array.push(..)
+	UNTUPLE 1
+	NEWC
+	PUSH S1
+	SWAP
+	STDICT
+	NIP
+	SWAP
+	UNPAIR
+	PUSH S1
+	INC
+	XCHG s3
+	ROTREV
+	PUSHINT 32
+	DICTUSETB
+	PAIR
+	; colValue
+	SETGLOB 13
+	; end colValue
+	;; ++
+	; expValue
+	; end expValue
+	INC
+	FITS 256
+	; colValue
+	; end colValue
+}
+WHILE
+DROP
+; end for
+; for
+PUSHINT 0
+;; decl: i
+PUSHCONT {
+	;; push identifier i
+	DUP
+	LESSINT 3
+}
+PUSHCONT {
+	; expValue
+	;; fetch swapReversedDB
+	GETGLOB 14
+	; end expValue
+	NEWDICT
+	TUPLE 1
+	;; array.push(..)
+	UNTUPLE 1
+	NEWC
+	PUSH S1
+	SWAP
+	STDICT
+	NIP
+	SWAP
+	UNPAIR
+	PUSH S1
+	INC
+	XCHG s3
+	ROTREV
+	PUSHINT 32
+	DICTUSETB
+	PAIR
+	; colValue
+	SETGLOB 14
+	; end colValue
+	;; ++
+	; expValue
+	; end expValue
+	INC
+	FITS 256
+	; colValue
+	; end colValue
+}
+WHILE
+DROP
+; end for
+DROP2
+; end constructor TonSwapOrderbook
+CALL $c7_to_c4$
+TRUE
+SETGLOB 7
+
+.globl	withdraw
+.public	withdraw
+.type	withdraw, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode amount
+LDU 256
+ENDS
+;; param: amount
+; function withdraw
+;; get member sender
+GETGLOB 9
+;; decl: sender
+;; map.exists
+;; push identifier sender
+DUP
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: exists
+;; push identifier exists
+DUP
+THROWIFNOT 103
+;; index
+;; push identifier sender
+PUSH S1
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+;; decl: balance
+;; push identifier amount
+PUSH S3
+;; get member value
+;; push identifier balance
+PUSH S1
+INDEX 0
+;; <=
+LEQ
+THROWIFNOT 104
+;; push identifier amount
+PUSH S3
+; expValue
+PUSH S1
+DUP
+INDEX 0
+; end expValue
+ROT
+SUB
+UFITS 256
+; colValue
+SETINDEX 0
+NIP
+; end colValue
+;; if
+;; get member value
+;; push identifier balance
+DUP
+INDEX 0
+PUSHINT 0
+;; uint256
+UFITS 256
+;; ==
+EQUAL
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; get member inOrders
+	;; push identifier balance
+	DUP
+	INDEX 1
+	PUSHINT 0
+	;; uint256
+	UFITS 256
+	;; ==
+	EQUAL
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		;; get member locked
+		;; push identifier balance
+		DUP
+		INDEX 2
+		PUSHINT 0
+		;; uint256
+		UFITS 256
+		;; ==
+		EQUAL
+	}
+	IF
+}
+IF
+PUSHCONT {
+	;; delete
+	; expValue
+	;; fetch participantDB
+	GETGLOB 10
+	;; push identifier sender
+	PUSH S3
+	SWAP
+	; end expValue
+	PUSH S1
+	SWAP
+	PUSHINT 267
+	DICTDEL
+	DROP
+	; colValue
+	NIP
+	SETGLOB 10
+	; end colValue
+}
+PUSHCONT {
+	; expValue
+	;; fetch participantDB
+	GETGLOB 10
+	;; push identifier sender
+	PUSH S3
+	SWAP
+	; end expValue
+	;; push identifier balance
+	PUSH S2
+	; colValue
+	UNTUPLE 3
+	NEWC
+	PUSH S3
+	STUR 256
+	PUSH S2
+	STUR 256
+	PUSH S1
+	STUR 256
+	XCHG s3
+	BLKDROP 3
+	ENDC
+	ROTREV
+	PUSHINT 267
+	DICTSETREF
+	SETGLOB 10
+	; end colValue
+}
+IFELSE
+;; end if
+;; transfer()
+;; push identifier amount
+PUSH S3
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 4
+; end function withdraw
+CALL $c7_to_c4$
+TRUE
+SETGLOB 7
+
+.globl	withdraw_internal
+.type	withdraw_internal, @function
+;; param: amount
+; function withdraw
+;; get member sender
+GETGLOB 9
+;; decl: sender
+;; map.exists
+;; push identifier sender
+DUP
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: exists
+;; push identifier exists
+DUP
+THROWIFNOT 103
+;; index
+;; push identifier sender
+PUSH S1
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+;; decl: balance
+;; push identifier amount
+PUSH S3
+;; get member value
+;; push identifier balance
+PUSH S1
+INDEX 0
+;; <=
+LEQ
+THROWIFNOT 104
+;; push identifier amount
+PUSH S3
+; expValue
+PUSH S1
+DUP
+INDEX 0
+; end expValue
+ROT
+SUB
+UFITS 256
+; colValue
+SETINDEX 0
+NIP
+; end colValue
+;; if
+;; get member value
+;; push identifier balance
+DUP
+INDEX 0
+PUSHINT 0
+;; uint256
+UFITS 256
+;; ==
+EQUAL
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; get member inOrders
+	;; push identifier balance
+	DUP
+	INDEX 1
+	PUSHINT 0
+	;; uint256
+	UFITS 256
+	;; ==
+	EQUAL
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		;; get member locked
+		;; push identifier balance
+		DUP
+		INDEX 2
+		PUSHINT 0
+		;; uint256
+		UFITS 256
+		;; ==
+		EQUAL
+	}
+	IF
+}
+IF
+PUSHCONT {
+	;; delete
+	; expValue
+	;; fetch participantDB
+	GETGLOB 10
+	;; push identifier sender
+	PUSH S3
+	SWAP
+	; end expValue
+	PUSH S1
+	SWAP
+	PUSHINT 267
+	DICTDEL
+	DROP
+	; colValue
+	NIP
+	SETGLOB 10
+	; end colValue
+}
+PUSHCONT {
+	; expValue
+	;; fetch participantDB
+	GETGLOB 10
+	;; push identifier sender
+	PUSH S3
+	SWAP
+	; end expValue
+	;; push identifier balance
+	PUSH S2
+	; colValue
+	UNTUPLE 3
+	NEWC
+	PUSH S3
+	STUR 256
+	PUSH S2
+	STUR 256
+	PUSH S1
+	STUR 256
+	XCHG s3
+	BLKDROP 3
+	ENDC
+	ROTREV
+	PUSHINT 267
+	DICTSETREF
+	SETGLOB 10
+	; end colValue
+}
+IFELSE
+;; end if
+;; transfer()
+;; push identifier amount
+PUSH S3
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 4
+; end function withdraw
+
+.globl	getBalance
+.public	getBalance
+.type	getBalance, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode participant
+LDMSGADDR
+ENDS
+;; param: participant
+; function getBalance
+;; ret param: balance
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+TUPLE 3
+; expValue
+; end expValue
+;; index
+;; push identifier participant
+PUSH S1
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+; colValue
+NIP
+; end colValue
+;; returning named params
+SWAP
+DROP
+;; emitting 1 value(s)
+PUSH S1
+EQINT -1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 96
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 1
+	NEWC
+	STSLICECONST xfb0352ef
+	PUSH S2
+	UNTUPLE 3
+	BLKSWAP 1, 3
+	PUSH S3
+	STUR 256
+	PUSH S2
+	STUR 256
+	PUSH S1
+	STUR 256
+	XCHG s3
+	BLKDROP 3
+	STBREFR
+	ENDC
+	PUSHINT 1
+	SENDRAWMSG
+}
+IF
+DROP
+; end function getBalance
+EQINT -1
+PUSHCONT {
+	CALL $c7_to_c4$
+}
+IF
+TRUE
+SETGLOB 7
+
+.globl	getBalance_internal
+.type	getBalance_internal, @function
+;; param: participant
+; function getBalance
+;; ret param: balance
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+TUPLE 3
+; expValue
+; end expValue
+;; index
+;; push identifier participant
+PUSH S1
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+; colValue
+NIP
+; end colValue
+;; returning named params
+SWAP
+DROP
+; end function getBalance
+
+.globl	getEthSmcAddress
+.public	getEthSmcAddress
+.type	getEthSmcAddress, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+ENDS
+; function getEthSmcAddress
+;; ret param: ethSmcAddress
+PUSHINT 0
+; expValue
+; end expValue
+;; push identifier SWAP_ETH_SMC_ADDRESS
+GETGLOB 11
+; colValue
+NIP
+; end colValue
+;; returning named params
+;; emitting 1 value(s)
+PUSH S1
+EQINT -1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 96
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	STSLICECONST xe864e0e1
+	PUSH S1
+	STUR 256
+	ENDC
+	PUSHINT 1
+	SENDRAWMSG
+}
+IF
+DROP
+; end function getEthSmcAddress
+EQINT -1
+PUSHCONT {
+	CALL $c7_to_c4$
+}
+IF
+TRUE
+SETGLOB 7
+
+.globl	getEthSmcAddress_internal
+.type	getEthSmcAddress_internal, @function
+; function getEthSmcAddress
+;; ret param: ethSmcAddress
+PUSHINT 0
+; expValue
+; end expValue
+;; push identifier SWAP_ETH_SMC_ADDRESS
+GETGLOB 11
+; colValue
+NIP
+; end colValue
+;; returning named params
+; end function getEthSmcAddress
+
+.globl	getEthTokenSmcAddress
+.public	getEthTokenSmcAddress
+.type	getEthTokenSmcAddress, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+ENDS
+; function getEthTokenSmcAddress
+;; ret param: ethTokenSmcAddress
+PUSHINT 0
+; expValue
+; end expValue
+;; push identifier SWAP_ETH_TOKEN_SMC_ADDRESS
+GETGLOB 12
+; colValue
+NIP
+; end colValue
+;; returning named params
+;; emitting 1 value(s)
+PUSH S1
+EQINT -1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 96
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	STSLICECONST xd23bfcca
+	PUSH S1
+	STUR 256
+	ENDC
+	PUSHINT 1
+	SENDRAWMSG
+}
+IF
+DROP
+; end function getEthTokenSmcAddress
+EQINT -1
+PUSHCONT {
+	CALL $c7_to_c4$
+}
+IF
+TRUE
+SETGLOB 7
+
+.globl	getEthTokenSmcAddress_internal
+.type	getEthTokenSmcAddress_internal, @function
+; function getEthTokenSmcAddress
+;; ret param: ethTokenSmcAddress
+PUSHINT 0
+; expValue
+; end expValue
+;; push identifier SWAP_ETH_TOKEN_SMC_ADDRESS
+GETGLOB 12
+; colValue
+NIP
+; end colValue
+;; returning named params
+; end function getEthTokenSmcAddress
+
+.globl	createDirectOrder
+.public	createDirectOrder
+.type	createDirectOrder, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode dbId
+LDU 32
+; Decode value
+LDU 256
+; Decode minValue
+LDUQ 256
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 256
+}
+IFNOT
+; Decode exchangeRate
+LDUQ 256
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 256
+}
+IFNOT
+; Decode timeLockSlot
+LDUQ 32
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 32
+}
+IFNOT
+; Decode secretHash
+LDUQ 256
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 256
+}
+IFNOT
+; Decode initiatorTargetAddress
+LDUQ 256
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 256
+}
+IFNOT
+ENDS
+;; param: dbId
+;; param: value
+;; param: minValue
+;; param: exchangeRate
+;; param: timeLockSlot
+;; param: secretHash
+;; param: initiatorTargetAddress
+; function createDirectOrder
+;; push identifier timeLockSlot
+PUSH S2
+PUSHINT 3600
+;; >=
+GEQ
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier timeLockSlot
+	PUSH S2
+	PUSHINT 604800
+	;; <=
+	LEQ
+}
+IF
+THROWIFNOT 105
+;; push identifier value
+PUSH S5
+PUSHINT 0
+;; uint256
+UFITS 256
+;; >
+GREATER
+THROWIFNOT 111
+;; push identifier minValue
+PUSH S4
+PUSHINT 0
+;; uint256
+UFITS 256
+;; >
+GREATER
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier minValue
+	PUSH S4
+	;; push identifier value
+	PUSH S6
+	;; <=
+	LEQ
+}
+IF
+THROWIFNOT 106
+;; push identifier exchangeRate
+PUSH S3
+PUSHINT 0
+;; uint256
+UFITS 256
+;; !=
+NEQ
+THROWIFNOT 107
+;; push identifier initiatorTargetAddress
+DUP
+PUSHINT 0
+;; uint256
+UFITS 256
+;; !=
+NEQ
+THROWIFNOT 109
+;; get member sender
+GETGLOB 9
+;; decl: sender
+;; push identifier dbId
+PUSH S7
+LESSINT 3
+THROWIFNOT 112
+;; map.exists
+;; push identifier sender
+DUP
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S8
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; !
+;; push identifier orderExists
+DUP
+NOT
+THROWIFNOT 113
+;; map.exists
+;; push identifier sender
+PUSH S1
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: balanceExists
+;; push identifier balanceExists
+DUP
+THROWIFNOT 103
+;; index
+;; push identifier sender
+PUSH S2
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+;; decl: balance
+;; push identifier value
+PUSH S9
+;; get member value
+;; push identifier balance
+PUSH S1
+INDEX 0
+;; <=
+LEQ
+THROWIFNOT 104
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+PUSHINT 0
+TUPLE 10
+;; decl: newOrder
+; expValue
+DUP
+; end expValue
+FALSE
+; colValue
+SETINDEX 0
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier value
+PUSH S11
+; colValue
+SETINDEX 2
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier minValue
+PUSH S10
+; colValue
+SETINDEX 3
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier exchangeRate
+PUSH S9
+; colValue
+SETINDEX 4
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier timeLockSlot
+PUSH S8
+; colValue
+SETINDEX 5
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier secretHash
+PUSH S7
+; colValue
+SETINDEX 6
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier initiatorTargetAddress
+PUSH S6
+; colValue
+SETINDEX 7
+NIP
+; end colValue
+;; map.add
+; expValue
+;; fetch swapDirectDB
+GETGLOB 13
+UNPAIR
+;; push identifier dbId
+PUSH S13
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+PUSH2 S1, S0
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+; end expValue
+;; push identifier newOrder
+PUSH S4
+UNTUPLE 10
+NEWC
+NEWC
+PUSH S5
+STUR 256
+PUSH S4
+STUR 256
+PUSH S3
+STSLICER
+STBREFR
+NEWC
+PUSH S2
+STUR 256
+STBREFR
+PUSH S10
+STIR 1
+PUSH S9
+STUR 32
+PUSH S8
+STUR 256
+PUSH S7
+STUR 256
+PUSH S6
+STUR 256
+PUSH S5
+STUR 32
+XCHG s10
+BLKDROP 10
+ENDC
+;; push identifier sender
+PUSH S9
+ROT
+PUSHINT 267
+DICTADDREF
+BLKSWAP 4, 1
+; colValue
+NEWC
+STDICT
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 13
+; end colValue
+DROP
+;; push identifier value
+PUSH S10
+; expValue
+PUSH S2
+DUP
+INDEX 0
+; end expValue
+ROT
+SUB
+UFITS 256
+; colValue
+SETINDEX 0
+POP s2
+; end colValue
+;; get member inOrders
+;; push identifier balance
+PUSH S1
+INDEX 1
+;; push identifier value
+PUSH S11
+CALL $add256_internal$
+; expValue
+PUSH S2
+; end expValue
+SWAP
+; colValue
+SETINDEX 1
+POP s2
+; end colValue
+; expValue
+;; fetch participantDB
+GETGLOB 10
+;; push identifier sender
+PUSH S5
+SWAP
+; end expValue
+;; push identifier balance
+PUSH S3
+; colValue
+UNTUPLE 3
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+PUSH S1
+STUR 256
+XCHG s3
+BLKDROP 3
+ENDC
+ROTREV
+PUSHINT 267
+DICTSETREF
+SETGLOB 10
+; end colValue
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 12
+; end function createDirectOrder
+CALL $c7_to_c4$
+TRUE
+SETGLOB 7
+
+.globl	createDirectOrder_internal
+.type	createDirectOrder_internal, @function
+;; param: dbId
+;; param: value
+;; param: minValue
+;; param: exchangeRate
+;; param: timeLockSlot
+;; param: secretHash
+;; param: initiatorTargetAddress
+; function createDirectOrder
+;; push identifier timeLockSlot
+PUSH S2
+PUSHINT 3600
+;; >=
+GEQ
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier timeLockSlot
+	PUSH S2
+	PUSHINT 604800
+	;; <=
+	LEQ
+}
+IF
+THROWIFNOT 105
+;; push identifier value
+PUSH S5
+PUSHINT 0
+;; uint256
+UFITS 256
+;; >
+GREATER
+THROWIFNOT 111
+;; push identifier minValue
+PUSH S4
+PUSHINT 0
+;; uint256
+UFITS 256
+;; >
+GREATER
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier minValue
+	PUSH S4
+	;; push identifier value
+	PUSH S6
+	;; <=
+	LEQ
+}
+IF
+THROWIFNOT 106
+;; push identifier exchangeRate
+PUSH S3
+PUSHINT 0
+;; uint256
+UFITS 256
+;; !=
+NEQ
+THROWIFNOT 107
+;; push identifier initiatorTargetAddress
+DUP
+PUSHINT 0
+;; uint256
+UFITS 256
+;; !=
+NEQ
+THROWIFNOT 109
+;; get member sender
+GETGLOB 9
+;; decl: sender
+;; push identifier dbId
+PUSH S7
+LESSINT 3
+THROWIFNOT 112
+;; map.exists
+;; push identifier sender
+DUP
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S8
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; !
+;; push identifier orderExists
+DUP
+NOT
+THROWIFNOT 113
+;; map.exists
+;; push identifier sender
+PUSH S1
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: balanceExists
+;; push identifier balanceExists
+DUP
+THROWIFNOT 103
+;; index
+;; push identifier sender
+PUSH S2
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+;; decl: balance
+;; push identifier value
+PUSH S9
+;; get member value
+;; push identifier balance
+PUSH S1
+INDEX 0
+;; <=
+LEQ
+THROWIFNOT 104
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+PUSHINT 0
+TUPLE 10
+;; decl: newOrder
+; expValue
+DUP
+; end expValue
+FALSE
+; colValue
+SETINDEX 0
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier value
+PUSH S11
+; colValue
+SETINDEX 2
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier minValue
+PUSH S10
+; colValue
+SETINDEX 3
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier exchangeRate
+PUSH S9
+; colValue
+SETINDEX 4
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier timeLockSlot
+PUSH S8
+; colValue
+SETINDEX 5
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier secretHash
+PUSH S7
+; colValue
+SETINDEX 6
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier initiatorTargetAddress
+PUSH S6
+; colValue
+SETINDEX 7
+NIP
+; end colValue
+;; map.add
+; expValue
+;; fetch swapDirectDB
+GETGLOB 13
+UNPAIR
+;; push identifier dbId
+PUSH S13
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+PUSH2 S1, S0
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+; end expValue
+;; push identifier newOrder
+PUSH S4
+UNTUPLE 10
+NEWC
+NEWC
+PUSH S5
+STUR 256
+PUSH S4
+STUR 256
+PUSH S3
+STSLICER
+STBREFR
+NEWC
+PUSH S2
+STUR 256
+STBREFR
+PUSH S10
+STIR 1
+PUSH S9
+STUR 32
+PUSH S8
+STUR 256
+PUSH S7
+STUR 256
+PUSH S6
+STUR 256
+PUSH S5
+STUR 32
+XCHG s10
+BLKDROP 10
+ENDC
+;; push identifier sender
+PUSH S9
+ROT
+PUSHINT 267
+DICTADDREF
+BLKSWAP 4, 1
+; colValue
+NEWC
+STDICT
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 13
+; end colValue
+DROP
+;; push identifier value
+PUSH S10
+; expValue
+PUSH S2
+DUP
+INDEX 0
+; end expValue
+ROT
+SUB
+UFITS 256
+; colValue
+SETINDEX 0
+POP s2
+; end colValue
+;; get member inOrders
+;; push identifier balance
+PUSH S1
+INDEX 1
+;; push identifier value
+PUSH S11
+CALL $add256_internal$
+; expValue
+PUSH S2
+; end expValue
+SWAP
+; colValue
+SETINDEX 1
+POP s2
+; end colValue
+; expValue
+;; fetch participantDB
+GETGLOB 10
+;; push identifier sender
+PUSH S5
+SWAP
+; end expValue
+;; push identifier balance
+PUSH S3
+; colValue
+UNTUPLE 3
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+PUSH S1
+STUR 256
+XCHG s3
+BLKDROP 3
+ENDC
+ROTREV
+PUSHINT 267
+DICTSETREF
+SETGLOB 10
+; end colValue
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 12
+; end function createDirectOrder
+
+.globl	deleteDirectOrder
+.public	deleteDirectOrder
+.type	deleteDirectOrder, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode dbId
+LDU 32
+ENDS
+;; param: dbId
+; function deleteDirectOrder
+;; get member sender
+GETGLOB 9
+;; decl: sender
+;; push identifier dbId
+PUSH S1
+;; get member length
+;; push identifier swapDirectDB
+GETGLOB 13
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.exists
+;; push identifier sender
+DUP
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S2
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; push identifier orderExists
+DUP
+THROWIFNOT 114
+;; index
+;; push identifier sender
+PUSH S1
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S3
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	PLDU 256
+	TUPLE 10
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	TUPLE 10
+}
+IFELSE
+;; decl: order
+;; !
+;; get member confirmed
+;; push identifier order
+DUP
+INDEX 0
+NOT
+THROWIFNOT 115
+;; map.exists
+;; push identifier sender
+PUSH S2
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: balanceExists
+;; push identifier balanceExists
+DUP
+THROWIFNOT 103
+;; index
+;; push identifier sender
+PUSH S3
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+;; decl: balance
+;; get member value
+;; push identifier balance
+DUP
+INDEX 0
+;; get member value
+;; push identifier order
+PUSH S3
+INDEX 2
+CALL $add256_internal$
+; expValue
+PUSH S1
+; end expValue
+SWAP
+; colValue
+SETINDEX 0
+NIP
+; end colValue
+;; get member inOrders
+;; push identifier balance
+DUP
+INDEX 1
+;; get member value
+;; push identifier order
+PUSH S3
+INDEX 2
+;; >=
+GEQ
+THROWIFNOT 117
+;; get member value
+;; push identifier order
+PUSH S2
+INDEX 2
+; expValue
+PUSH S1
+DUP
+INDEX 1
+; end expValue
+ROT
+SUB
+UFITS 256
+; colValue
+SETINDEX 1
+NIP
+; end colValue
+; expValue
+;; fetch participantDB
+GETGLOB 10
+;; push identifier sender
+PUSH S5
+SWAP
+; end expValue
+;; push identifier balance
+PUSH S2
+; colValue
+UNTUPLE 3
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+PUSH S1
+STUR 256
+XCHG s3
+BLKDROP 3
+ENDC
+ROTREV
+PUSHINT 267
+DICTSETREF
+SETGLOB 10
+; end colValue
+;; index
+;; push identifier dbId
+PUSH S5
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+TUPLE 1
+;; decl: db
+;; delete
+; expValue
+DUP
+DUP
+INDEX 0
+;; push identifier sender
+PUSH S7
+SWAP
+; end expValue
+PUSH S1
+SWAP
+PUSHINT 267
+DICTDEL
+DROP
+; colValue
+NIP
+SETINDEX 0
+NIP
+; end colValue
+; expValue
+;; fetch swapDirectDB
+GETGLOB 13
+UNPAIR
+;; push identifier dbId
+PUSH S8
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+; end expValue
+;; push identifier db
+PUSH S3
+; colValue
+UNTUPLE 1
+NEWC
+PUSH S1
+SWAP
+STDICT
+NIP
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 13
+; end colValue
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 7
+; end function deleteDirectOrder
+CALL $c7_to_c4$
+TRUE
+SETGLOB 7
+
+.globl	deleteDirectOrder_internal
+.type	deleteDirectOrder_internal, @function
+;; param: dbId
+; function deleteDirectOrder
+;; get member sender
+GETGLOB 9
+;; decl: sender
+;; push identifier dbId
+PUSH S1
+;; get member length
+;; push identifier swapDirectDB
+GETGLOB 13
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.exists
+;; push identifier sender
+DUP
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S2
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; push identifier orderExists
+DUP
+THROWIFNOT 114
+;; index
+;; push identifier sender
+PUSH S1
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S3
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	PLDU 256
+	TUPLE 10
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	TUPLE 10
+}
+IFELSE
+;; decl: order
+;; !
+;; get member confirmed
+;; push identifier order
+DUP
+INDEX 0
+NOT
+THROWIFNOT 115
+;; map.exists
+;; push identifier sender
+PUSH S2
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: balanceExists
+;; push identifier balanceExists
+DUP
+THROWIFNOT 103
+;; index
+;; push identifier sender
+PUSH S3
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+;; decl: balance
+;; get member value
+;; push identifier balance
+DUP
+INDEX 0
+;; get member value
+;; push identifier order
+PUSH S3
+INDEX 2
+CALL $add256_internal$
+; expValue
+PUSH S1
+; end expValue
+SWAP
+; colValue
+SETINDEX 0
+NIP
+; end colValue
+;; get member inOrders
+;; push identifier balance
+DUP
+INDEX 1
+;; get member value
+;; push identifier order
+PUSH S3
+INDEX 2
+;; >=
+GEQ
+THROWIFNOT 117
+;; get member value
+;; push identifier order
+PUSH S2
+INDEX 2
+; expValue
+PUSH S1
+DUP
+INDEX 1
+; end expValue
+ROT
+SUB
+UFITS 256
+; colValue
+SETINDEX 1
+NIP
+; end colValue
+; expValue
+;; fetch participantDB
+GETGLOB 10
+;; push identifier sender
+PUSH S5
+SWAP
+; end expValue
+;; push identifier balance
+PUSH S2
+; colValue
+UNTUPLE 3
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+PUSH S1
+STUR 256
+XCHG s3
+BLKDROP 3
+ENDC
+ROTREV
+PUSHINT 267
+DICTSETREF
+SETGLOB 10
+; end colValue
+;; index
+;; push identifier dbId
+PUSH S5
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+TUPLE 1
+;; decl: db
+;; delete
+; expValue
+DUP
+DUP
+INDEX 0
+;; push identifier sender
+PUSH S7
+SWAP
+; end expValue
+PUSH S1
+SWAP
+PUSHINT 267
+DICTDEL
+DROP
+; colValue
+NIP
+SETINDEX 0
+NIP
+; end colValue
+; expValue
+;; fetch swapDirectDB
+GETGLOB 13
+UNPAIR
+;; push identifier dbId
+PUSH S8
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+; end expValue
+;; push identifier db
+PUSH S3
+; colValue
+UNTUPLE 1
+NEWC
+PUSH S1
+SWAP
+STDICT
+NIP
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 13
+; end colValue
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 7
+; end function deleteDirectOrder
+
+.globl	confirmDirectOrder
+.public	confirmDirectOrder
+.type	confirmDirectOrder, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode dbId
+LDU 32
+; Decode value
+LDU 256
+; Decode initiatorAddress
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+; Decode confirmatorSourceAddress
+LDUQ 256
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 256
+}
+IFNOT
+ENDS
+;; param: dbId
+;; param: value
+;; param: initiatorAddress
+;; param: confirmatorSourceAddress
+; function confirmDirectOrder
+;; push identifier value
+PUSH S2
+PUSHINT 0
+;; uint256
+UFITS 256
+;; >
+GREATER
+THROWIFNOT 111
+;; push identifier initiatorAddress
+PUSH S1
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+THROWIFNOT 110
+;; push identifier confirmatorSourceAddress
+DUP
+PUSHINT 0
+;; uint256
+UFITS 256
+;; !=
+NEQ
+THROWIFNOT 109
+;; push identifier dbId
+PUSH S3
+;; get member length
+;; push identifier swapDirectDB
+GETGLOB 13
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.exists
+;; push identifier initiatorAddress
+PUSH S1
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S4
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; push identifier orderExists
+DUP
+THROWIFNOT 114
+;; index
+;; push identifier initiatorAddress
+PUSH S2
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S5
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	PLDU 256
+	TUPLE 10
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	TUPLE 10
+}
+IFELSE
+;; decl: order
+;; !
+;; get member confirmed
+;; push identifier order
+DUP
+INDEX 0
+NOT
+THROWIFNOT 115
+;; push identifier value
+PUSH S4
+;; get member minValue
+;; push identifier order
+PUSH S1
+INDEX 3
+;; >=
+GEQ
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier value
+	PUSH S4
+	;; get member value
+	;; push identifier order
+	PUSH S1
+	INDEX 2
+	;; <=
+	LEQ
+}
+IF
+THROWIFNOT 120
+;; map.exists
+;; push identifier initiatorAddress
+PUSH S3
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: balanceExists
+;; push identifier balanceExists
+DUP
+THROWIFNOT 103
+;; index
+;; push identifier initiatorAddress
+PUSH S4
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+;; decl: initiatorBalance
+;; get member value
+;; push identifier order
+PUSH S2
+INDEX 2
+;; push identifier value
+PUSH S7
+;; -
+SUB
+UFITS 256
+;; decl: delta
+;; get member inOrders
+;; push identifier initiatorBalance
+PUSH S1
+INDEX 1
+;; get member value
+;; push identifier order
+PUSH S4
+INDEX 2
+;; >=
+GEQ
+THROWIFNOT 117
+;; get member value
+;; push identifier order
+PUSH S3
+INDEX 2
+; expValue
+PUSH S2
+DUP
+INDEX 1
+; end expValue
+ROT
+SUB
+UFITS 256
+; colValue
+SETINDEX 1
+POP s2
+; end colValue
+;; get member locked
+;; push identifier initiatorBalance
+PUSH S1
+INDEX 2
+;; push identifier value
+PUSH S8
+CALL $add256_internal$
+; expValue
+PUSH S2
+; end expValue
+SWAP
+; colValue
+SETINDEX 2
+POP s2
+; end colValue
+;; get member value
+;; push identifier initiatorBalance
+PUSH S1
+INDEX 0
+;; push identifier delta
+PUSH S1
+CALL $add256_internal$
+; expValue
+PUSH S2
+; end expValue
+SWAP
+; colValue
+SETINDEX 0
+POP s2
+; end colValue
+; expValue
+;; fetch participantDB
+GETGLOB 10
+;; push identifier initiatorAddress
+PUSH S7
+SWAP
+; end expValue
+;; push identifier initiatorBalance
+PUSH S3
+; colValue
+UNTUPLE 3
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+PUSH S1
+STUR 256
+XCHG s3
+BLKDROP 3
+ENDC
+ROTREV
+PUSHINT 267
+DICTSETREF
+SETGLOB 10
+; end colValue
+; expValue
+PUSH S3
+; end expValue
+;; push identifier value
+PUSH S8
+; colValue
+SETINDEX 2
+POP s4
+; end colValue
+; expValue
+PUSH S3
+; end expValue
+;; get member sender
+GETGLOB 9
+; colValue
+SETINDEX 8
+POP s4
+; end colValue
+; expValue
+PUSH S3
+; end expValue
+;; push identifier confirmatorSourceAddress
+PUSH S6
+; colValue
+SETINDEX 9
+POP s4
+; end colValue
+;; push identifier now
+NOW
+;; uint32
+UFITS 32
+; expValue
+PUSH S4
+; end expValue
+SWAP
+; colValue
+SETINDEX 1
+POP s4
+; end colValue
+; expValue
+PUSH S3
+; end expValue
+TRUE
+; colValue
+SETINDEX 0
+POP s4
+; end colValue
+;; map.replace
+; expValue
+;; fetch swapDirectDB
+GETGLOB 13
+UNPAIR
+;; push identifier dbId
+PUSH S10
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+PUSH2 S1, S0
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+; end expValue
+;; push identifier order
+PUSH S7
+UNTUPLE 10
+NEWC
+NEWC
+PUSH S5
+STUR 256
+PUSH S4
+STUR 256
+PUSH S3
+STSLICER
+STBREFR
+NEWC
+PUSH S2
+STUR 256
+STBREFR
+PUSH S10
+STIR 1
+PUSH S9
+STUR 32
+PUSH S8
+STUR 256
+PUSH S7
+STUR 256
+PUSH S6
+STUR 256
+PUSH S5
+STUR 32
+XCHG s10
+BLKDROP 10
+ENDC
+;; push identifier initiatorAddress
+PUSH S11
+ROT
+PUSHINT 267
+DICTREPLACEREF
+BLKSWAP 4, 1
+; colValue
+NEWC
+STDICT
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 13
+; end colValue
+DROP
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 9
+; end function confirmDirectOrder
+CALL $c7_to_c4$
+TRUE
+SETGLOB 7
+
+.globl	confirmDirectOrder_internal
+.type	confirmDirectOrder_internal, @function
+;; param: dbId
+;; param: value
+;; param: initiatorAddress
+;; param: confirmatorSourceAddress
+; function confirmDirectOrder
+;; push identifier value
+PUSH S2
+PUSHINT 0
+;; uint256
+UFITS 256
+;; >
+GREATER
+THROWIFNOT 111
+;; push identifier initiatorAddress
+PUSH S1
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+THROWIFNOT 110
+;; push identifier confirmatorSourceAddress
+DUP
+PUSHINT 0
+;; uint256
+UFITS 256
+;; !=
+NEQ
+THROWIFNOT 109
+;; push identifier dbId
+PUSH S3
+;; get member length
+;; push identifier swapDirectDB
+GETGLOB 13
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.exists
+;; push identifier initiatorAddress
+PUSH S1
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S4
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; push identifier orderExists
+DUP
+THROWIFNOT 114
+;; index
+;; push identifier initiatorAddress
+PUSH S2
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S5
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	PLDU 256
+	TUPLE 10
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	TUPLE 10
+}
+IFELSE
+;; decl: order
+;; !
+;; get member confirmed
+;; push identifier order
+DUP
+INDEX 0
+NOT
+THROWIFNOT 115
+;; push identifier value
+PUSH S4
+;; get member minValue
+;; push identifier order
+PUSH S1
+INDEX 3
+;; >=
+GEQ
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier value
+	PUSH S4
+	;; get member value
+	;; push identifier order
+	PUSH S1
+	INDEX 2
+	;; <=
+	LEQ
+}
+IF
+THROWIFNOT 120
+;; map.exists
+;; push identifier initiatorAddress
+PUSH S3
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: balanceExists
+;; push identifier balanceExists
+DUP
+THROWIFNOT 103
+;; index
+;; push identifier initiatorAddress
+PUSH S4
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+;; decl: initiatorBalance
+;; get member value
+;; push identifier order
+PUSH S2
+INDEX 2
+;; push identifier value
+PUSH S7
+;; -
+SUB
+UFITS 256
+;; decl: delta
+;; get member inOrders
+;; push identifier initiatorBalance
+PUSH S1
+INDEX 1
+;; get member value
+;; push identifier order
+PUSH S4
+INDEX 2
+;; >=
+GEQ
+THROWIFNOT 117
+;; get member value
+;; push identifier order
+PUSH S3
+INDEX 2
+; expValue
+PUSH S2
+DUP
+INDEX 1
+; end expValue
+ROT
+SUB
+UFITS 256
+; colValue
+SETINDEX 1
+POP s2
+; end colValue
+;; get member locked
+;; push identifier initiatorBalance
+PUSH S1
+INDEX 2
+;; push identifier value
+PUSH S8
+CALL $add256_internal$
+; expValue
+PUSH S2
+; end expValue
+SWAP
+; colValue
+SETINDEX 2
+POP s2
+; end colValue
+;; get member value
+;; push identifier initiatorBalance
+PUSH S1
+INDEX 0
+;; push identifier delta
+PUSH S1
+CALL $add256_internal$
+; expValue
+PUSH S2
+; end expValue
+SWAP
+; colValue
+SETINDEX 0
+POP s2
+; end colValue
+; expValue
+;; fetch participantDB
+GETGLOB 10
+;; push identifier initiatorAddress
+PUSH S7
+SWAP
+; end expValue
+;; push identifier initiatorBalance
+PUSH S3
+; colValue
+UNTUPLE 3
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+PUSH S1
+STUR 256
+XCHG s3
+BLKDROP 3
+ENDC
+ROTREV
+PUSHINT 267
+DICTSETREF
+SETGLOB 10
+; end colValue
+; expValue
+PUSH S3
+; end expValue
+;; push identifier value
+PUSH S8
+; colValue
+SETINDEX 2
+POP s4
+; end colValue
+; expValue
+PUSH S3
+; end expValue
+;; get member sender
+GETGLOB 9
+; colValue
+SETINDEX 8
+POP s4
+; end colValue
+; expValue
+PUSH S3
+; end expValue
+;; push identifier confirmatorSourceAddress
+PUSH S6
+; colValue
+SETINDEX 9
+POP s4
+; end colValue
+;; push identifier now
+NOW
+;; uint32
+UFITS 32
+; expValue
+PUSH S4
+; end expValue
+SWAP
+; colValue
+SETINDEX 1
+POP s4
+; end colValue
+; expValue
+PUSH S3
+; end expValue
+TRUE
+; colValue
+SETINDEX 0
+POP s4
+; end colValue
+;; map.replace
+; expValue
+;; fetch swapDirectDB
+GETGLOB 13
+UNPAIR
+;; push identifier dbId
+PUSH S10
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+PUSH2 S1, S0
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+; end expValue
+;; push identifier order
+PUSH S7
+UNTUPLE 10
+NEWC
+NEWC
+PUSH S5
+STUR 256
+PUSH S4
+STUR 256
+PUSH S3
+STSLICER
+STBREFR
+NEWC
+PUSH S2
+STUR 256
+STBREFR
+PUSH S10
+STIR 1
+PUSH S9
+STUR 32
+PUSH S8
+STUR 256
+PUSH S7
+STUR 256
+PUSH S6
+STUR 256
+PUSH S5
+STUR 32
+XCHG s10
+BLKDROP 10
+ENDC
+;; push identifier initiatorAddress
+PUSH S11
+ROT
+PUSHINT 267
+DICTREPLACEREF
+BLKSWAP 4, 1
+; colValue
+NEWC
+STDICT
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 13
+; end colValue
+DROP
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 9
+; end function confirmDirectOrder
+
+.globl	finishDirectOrderWithSecret
+.public	finishDirectOrderWithSecret
+.type	finishDirectOrderWithSecret, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode dbId
+LDU 32
+; Decode initiatorAddress
+LDMSGADDR
+; Decode secret
+LDREF
+ENDS
+;; param: dbId
+;; param: initiatorAddress
+;; param: secret
+; function finishDirectOrderWithSecret
+;; push identifier initiatorAddress
+PUSH S1
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+THROWIFNOT 110
+;; push identifier dbId
+PUSH S2
+;; get member length
+;; push identifier swapDirectDB
+GETGLOB 13
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.exists
+;; push identifier initiatorAddress
+PUSH S1
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S3
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; push identifier orderExists
+DUP
+THROWIFNOT 114
+;; index
+;; push identifier initiatorAddress
+PUSH S2
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S4
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	PLDU 256
+	TUPLE 10
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	TUPLE 10
+}
+IFELSE
+;; decl: order
+;; get member confirmed
+;; push identifier order
+DUP
+INDEX 0
+THROWIFNOT 116
+;; push identifier secret
+PUSH S2
+CTOS
+SHA256U
+;; get member secretHash
+;; push identifier order
+PUSH S1
+INDEX 6
+;; ==
+EQUAL
+THROWIFNOT 121
+;; map.exists
+;; push identifier initiatorAddress
+PUSH S3
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: balanceExists
+;; push identifier balanceExists
+DUP
+THROWIFNOT 103
+;; index
+;; push identifier initiatorAddress
+PUSH S4
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+;; decl: initiatorBalance
+;; get member locked
+;; push identifier initiatorBalance
+DUP
+INDEX 2
+;; get member value
+;; push identifier order
+PUSH S3
+INDEX 2
+;; >=
+GEQ
+THROWIFNOT 117
+;; get member value
+;; push identifier order
+PUSH S2
+INDEX 2
+; expValue
+PUSH S1
+DUP
+INDEX 2
+; end expValue
+ROT
+SUB
+UFITS 256
+; colValue
+SETINDEX 2
+NIP
+; end colValue
+; expValue
+;; fetch participantDB
+GETGLOB 10
+;; push identifier initiatorAddress
+PUSH S6
+SWAP
+; end expValue
+;; push identifier initiatorBalance
+PUSH S2
+; colValue
+UNTUPLE 3
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+PUSH S1
+STUR 256
+XCHG s3
+BLKDROP 3
+ENDC
+ROTREV
+PUSHINT 267
+DICTSETREF
+SETGLOB 10
+; end colValue
+;; get member confirmatorTargetAddress
+;; push identifier order
+PUSH S2
+INDEX 8
+;; decl: confirmatorAddress
+;; map.exists
+;; push identifier confirmatorAddress
+DUP
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: confirmatorExists
+;; if
+;; push identifier confirmatorExists
+DUP
+PUSHCONT {
+	;; index
+	;; push identifier confirmatorAddress
+	PUSH S1
+	;; push identifier participantDB
+	GETGLOB 10
+	PUSHINT 267
+	DICTGETREF
+	PUSHCONT {
+		CTOS
+		LDU 256
+		LDU 256
+		PLDU 256
+		TUPLE 3
+	}
+	PUSHCONT {
+		PUSHINT 0
+		PUSHINT 0
+		PUSHINT 0
+		TUPLE 3
+	}
+	IFELSE
+	;; decl: confirmatorBalance
+	;; get member value
+	;; push identifier confirmatorBalance
+	DUP
+	INDEX 0
+	;; get member value
+	;; push identifier order
+	PUSH S6
+	INDEX 2
+	CALL $add256_internal$
+	; expValue
+	PUSH S1
+	; end expValue
+	SWAP
+	; colValue
+	SETINDEX 0
+	NIP
+	; end colValue
+	; expValue
+	;; fetch participantDB
+	GETGLOB 10
+	;; push identifier confirmatorAddress
+	PUSH S3
+	SWAP
+	; end expValue
+	;; push identifier confirmatorBalance
+	PUSH S2
+	; colValue
+	UNTUPLE 3
+	NEWC
+	PUSH S3
+	STUR 256
+	PUSH S2
+	STUR 256
+	PUSH S1
+	STUR 256
+	XCHG s3
+	BLKDROP 3
+	ENDC
+	ROTREV
+	PUSHINT 267
+	DICTSETREF
+	SETGLOB 10
+	; end colValue
+	DROP
+}
+PUSHCONT {
+	;; get member value
+	;; push identifier order
+	PUSH S4
+	INDEX 2
+	PUSHINT 0
+	;; uint256
+	UFITS 256
+	PUSHINT 0
+	;; uint256
+	UFITS 256
+	TUPLE 3
+	; expValue
+	;; fetch participantDB
+	GETGLOB 10
+	;; push identifier confirmatorAddress
+	PUSH S3
+	SWAP
+	; end expValue
+	ROT
+	; colValue
+	UNTUPLE 3
+	NEWC
+	PUSH S3
+	STUR 256
+	PUSH S2
+	STUR 256
+	PUSH S1
+	STUR 256
+	XCHG s3
+	BLKDROP 3
+	ENDC
+	ROTREV
+	PUSHINT 267
+	DICTSETREF
+	SETGLOB 10
+	; end colValue
+}
+IFELSE
+;; end if
+;; index
+;; push identifier dbId
+PUSH S8
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+TUPLE 1
+;; decl: db
+;; delete
+; expValue
+DUP
+DUP
+INDEX 0
+;; push identifier initiatorAddress
+PUSH S10
+SWAP
+; end expValue
+PUSH S1
+SWAP
+PUSHINT 267
+DICTDEL
+DROP
+; colValue
+NIP
+SETINDEX 0
+NIP
+; end colValue
+; expValue
+;; fetch swapDirectDB
+GETGLOB 13
+UNPAIR
+;; push identifier dbId
+PUSH S11
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+; end expValue
+;; push identifier db
+PUSH S3
+; colValue
+UNTUPLE 1
+NEWC
+PUSH S1
+SWAP
+STDICT
+NIP
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 13
+; end colValue
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 10
+; end function finishDirectOrderWithSecret
+CALL $c7_to_c4$
+TRUE
+SETGLOB 7
+
+.globl	finishDirectOrderWithSecret_internal
+.type	finishDirectOrderWithSecret_internal, @function
+;; param: dbId
+;; param: initiatorAddress
+;; param: secret
+; function finishDirectOrderWithSecret
+;; push identifier initiatorAddress
+PUSH S1
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+THROWIFNOT 110
+;; push identifier dbId
+PUSH S2
+;; get member length
+;; push identifier swapDirectDB
+GETGLOB 13
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.exists
+;; push identifier initiatorAddress
+PUSH S1
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S3
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; push identifier orderExists
+DUP
+THROWIFNOT 114
+;; index
+;; push identifier initiatorAddress
+PUSH S2
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S4
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	PLDU 256
+	TUPLE 10
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	TUPLE 10
+}
+IFELSE
+;; decl: order
+;; get member confirmed
+;; push identifier order
+DUP
+INDEX 0
+THROWIFNOT 116
+;; push identifier secret
+PUSH S2
+CTOS
+SHA256U
+;; get member secretHash
+;; push identifier order
+PUSH S1
+INDEX 6
+;; ==
+EQUAL
+THROWIFNOT 121
+;; map.exists
+;; push identifier initiatorAddress
+PUSH S3
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: balanceExists
+;; push identifier balanceExists
+DUP
+THROWIFNOT 103
+;; index
+;; push identifier initiatorAddress
+PUSH S4
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+;; decl: initiatorBalance
+;; get member locked
+;; push identifier initiatorBalance
+DUP
+INDEX 2
+;; get member value
+;; push identifier order
+PUSH S3
+INDEX 2
+;; >=
+GEQ
+THROWIFNOT 117
+;; get member value
+;; push identifier order
+PUSH S2
+INDEX 2
+; expValue
+PUSH S1
+DUP
+INDEX 2
+; end expValue
+ROT
+SUB
+UFITS 256
+; colValue
+SETINDEX 2
+NIP
+; end colValue
+; expValue
+;; fetch participantDB
+GETGLOB 10
+;; push identifier initiatorAddress
+PUSH S6
+SWAP
+; end expValue
+;; push identifier initiatorBalance
+PUSH S2
+; colValue
+UNTUPLE 3
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+PUSH S1
+STUR 256
+XCHG s3
+BLKDROP 3
+ENDC
+ROTREV
+PUSHINT 267
+DICTSETREF
+SETGLOB 10
+; end colValue
+;; get member confirmatorTargetAddress
+;; push identifier order
+PUSH S2
+INDEX 8
+;; decl: confirmatorAddress
+;; map.exists
+;; push identifier confirmatorAddress
+DUP
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: confirmatorExists
+;; if
+;; push identifier confirmatorExists
+DUP
+PUSHCONT {
+	;; index
+	;; push identifier confirmatorAddress
+	PUSH S1
+	;; push identifier participantDB
+	GETGLOB 10
+	PUSHINT 267
+	DICTGETREF
+	PUSHCONT {
+		CTOS
+		LDU 256
+		LDU 256
+		PLDU 256
+		TUPLE 3
+	}
+	PUSHCONT {
+		PUSHINT 0
+		PUSHINT 0
+		PUSHINT 0
+		TUPLE 3
+	}
+	IFELSE
+	;; decl: confirmatorBalance
+	;; get member value
+	;; push identifier confirmatorBalance
+	DUP
+	INDEX 0
+	;; get member value
+	;; push identifier order
+	PUSH S6
+	INDEX 2
+	CALL $add256_internal$
+	; expValue
+	PUSH S1
+	; end expValue
+	SWAP
+	; colValue
+	SETINDEX 0
+	NIP
+	; end colValue
+	; expValue
+	;; fetch participantDB
+	GETGLOB 10
+	;; push identifier confirmatorAddress
+	PUSH S3
+	SWAP
+	; end expValue
+	;; push identifier confirmatorBalance
+	PUSH S2
+	; colValue
+	UNTUPLE 3
+	NEWC
+	PUSH S3
+	STUR 256
+	PUSH S2
+	STUR 256
+	PUSH S1
+	STUR 256
+	XCHG s3
+	BLKDROP 3
+	ENDC
+	ROTREV
+	PUSHINT 267
+	DICTSETREF
+	SETGLOB 10
+	; end colValue
+	DROP
+}
+PUSHCONT {
+	;; get member value
+	;; push identifier order
+	PUSH S4
+	INDEX 2
+	PUSHINT 0
+	;; uint256
+	UFITS 256
+	PUSHINT 0
+	;; uint256
+	UFITS 256
+	TUPLE 3
+	; expValue
+	;; fetch participantDB
+	GETGLOB 10
+	;; push identifier confirmatorAddress
+	PUSH S3
+	SWAP
+	; end expValue
+	ROT
+	; colValue
+	UNTUPLE 3
+	NEWC
+	PUSH S3
+	STUR 256
+	PUSH S2
+	STUR 256
+	PUSH S1
+	STUR 256
+	XCHG s3
+	BLKDROP 3
+	ENDC
+	ROTREV
+	PUSHINT 267
+	DICTSETREF
+	SETGLOB 10
+	; end colValue
+}
+IFELSE
+;; end if
+;; index
+;; push identifier dbId
+PUSH S8
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+TUPLE 1
+;; decl: db
+;; delete
+; expValue
+DUP
+DUP
+INDEX 0
+;; push identifier initiatorAddress
+PUSH S10
+SWAP
+; end expValue
+PUSH S1
+SWAP
+PUSHINT 267
+DICTDEL
+DROP
+; colValue
+NIP
+SETINDEX 0
+NIP
+; end colValue
+; expValue
+;; fetch swapDirectDB
+GETGLOB 13
+UNPAIR
+;; push identifier dbId
+PUSH S11
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+; end expValue
+;; push identifier db
+PUSH S3
+; colValue
+UNTUPLE 1
+NEWC
+PUSH S1
+SWAP
+STDICT
+NIP
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 13
+; end colValue
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 10
+; end function finishDirectOrderWithSecret
+
+.globl	finishDirectOrderWithTimeout
+.public	finishDirectOrderWithTimeout
+.type	finishDirectOrderWithTimeout, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode dbId
+LDU 32
+; Decode initiatorAddress
+LDMSGADDR
+ENDS
+;; param: dbId
+;; param: initiatorAddress
+; function finishDirectOrderWithTimeout
+;; push identifier initiatorAddress
+DUP
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+THROWIFNOT 110
+;; push identifier dbId
+PUSH S1
+;; get member length
+;; push identifier swapDirectDB
+GETGLOB 13
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.exists
+;; push identifier initiatorAddress
+DUP
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S2
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; push identifier orderExists
+DUP
+THROWIFNOT 114
+;; index
+;; push identifier initiatorAddress
+PUSH S1
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S3
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	PLDU 256
+	TUPLE 10
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	TUPLE 10
+}
+IFELSE
+;; decl: order
+;; get member confirmed
+;; push identifier order
+DUP
+INDEX 0
+THROWIFNOT 116
+;; get member confirmTime
+;; push identifier order
+DUP
+INDEX 1
+PUSHINT 3
+;; get member timeLockSlot
+;; push identifier order
+PUSH S2
+INDEX 5
+;; *
+MUL
+UFITS 32
+;; +
+ADD
+UFITS 32
+;; decl: expireAt
+;; push identifier expireAt
+DUP
+;; push identifier now
+NOW
+;; uint32
+UFITS 32
+;; <
+LESS
+THROWIFNOT 122
+;; map.exists
+;; push identifier initiatorAddress
+PUSH S3
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: balanceExists
+;; push identifier balanceExists
+DUP
+THROWIFNOT 103
+;; index
+;; push identifier initiatorAddress
+PUSH S4
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+;; decl: initiatorBalance
+;; get member value
+;; push identifier initiatorBalance
+DUP
+INDEX 0
+;; get member value
+;; push identifier order
+PUSH S4
+INDEX 2
+CALL $add256_internal$
+; expValue
+PUSH S1
+; end expValue
+SWAP
+; colValue
+SETINDEX 0
+NIP
+; end colValue
+;; get member locked
+;; push identifier initiatorBalance
+DUP
+INDEX 2
+;; get member value
+;; push identifier order
+PUSH S4
+INDEX 2
+;; >=
+GEQ
+THROWIFNOT 117
+;; get member value
+;; push identifier order
+PUSH S3
+INDEX 2
+; expValue
+PUSH S1
+DUP
+INDEX 2
+; end expValue
+ROT
+SUB
+UFITS 256
+; colValue
+SETINDEX 2
+NIP
+; end colValue
+; expValue
+;; fetch participantDB
+GETGLOB 10
+;; push identifier initiatorAddress
+PUSH S6
+SWAP
+; end expValue
+;; push identifier initiatorBalance
+PUSH S2
+; colValue
+UNTUPLE 3
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+PUSH S1
+STUR 256
+XCHG s3
+BLKDROP 3
+ENDC
+ROTREV
+PUSHINT 267
+DICTSETREF
+SETGLOB 10
+; end colValue
+;; index
+;; push identifier dbId
+PUSH S6
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+TUPLE 1
+;; decl: db
+;; delete
+; expValue
+DUP
+DUP
+INDEX 0
+;; push identifier initiatorAddress
+PUSH S8
+SWAP
+; end expValue
+PUSH S1
+SWAP
+PUSHINT 267
+DICTDEL
+DROP
+; colValue
+NIP
+SETINDEX 0
+NIP
+; end colValue
+; expValue
+;; fetch swapDirectDB
+GETGLOB 13
+UNPAIR
+;; push identifier dbId
+PUSH S9
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+; end expValue
+;; push identifier db
+PUSH S3
+; colValue
+UNTUPLE 1
+NEWC
+PUSH S1
+SWAP
+STDICT
+NIP
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 13
+; end colValue
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 8
+; end function finishDirectOrderWithTimeout
+CALL $c7_to_c4$
+TRUE
+SETGLOB 7
+
+.globl	finishDirectOrderWithTimeout_internal
+.type	finishDirectOrderWithTimeout_internal, @function
+;; param: dbId
+;; param: initiatorAddress
+; function finishDirectOrderWithTimeout
+;; push identifier initiatorAddress
+DUP
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+THROWIFNOT 110
+;; push identifier dbId
+PUSH S1
+;; get member length
+;; push identifier swapDirectDB
+GETGLOB 13
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.exists
+;; push identifier initiatorAddress
+DUP
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S2
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; push identifier orderExists
+DUP
+THROWIFNOT 114
+;; index
+;; push identifier initiatorAddress
+PUSH S1
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S3
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	PLDU 256
+	TUPLE 10
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	TUPLE 10
+}
+IFELSE
+;; decl: order
+;; get member confirmed
+;; push identifier order
+DUP
+INDEX 0
+THROWIFNOT 116
+;; get member confirmTime
+;; push identifier order
+DUP
+INDEX 1
+PUSHINT 3
+;; get member timeLockSlot
+;; push identifier order
+PUSH S2
+INDEX 5
+;; *
+MUL
+UFITS 32
+;; +
+ADD
+UFITS 32
+;; decl: expireAt
+;; push identifier expireAt
+DUP
+;; push identifier now
+NOW
+;; uint32
+UFITS 32
+;; <
+LESS
+THROWIFNOT 122
+;; map.exists
+;; push identifier initiatorAddress
+PUSH S3
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: balanceExists
+;; push identifier balanceExists
+DUP
+THROWIFNOT 103
+;; index
+;; push identifier initiatorAddress
+PUSH S4
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+;; decl: initiatorBalance
+;; get member value
+;; push identifier initiatorBalance
+DUP
+INDEX 0
+;; get member value
+;; push identifier order
+PUSH S4
+INDEX 2
+CALL $add256_internal$
+; expValue
+PUSH S1
+; end expValue
+SWAP
+; colValue
+SETINDEX 0
+NIP
+; end colValue
+;; get member locked
+;; push identifier initiatorBalance
+DUP
+INDEX 2
+;; get member value
+;; push identifier order
+PUSH S4
+INDEX 2
+;; >=
+GEQ
+THROWIFNOT 117
+;; get member value
+;; push identifier order
+PUSH S3
+INDEX 2
+; expValue
+PUSH S1
+DUP
+INDEX 2
+; end expValue
+ROT
+SUB
+UFITS 256
+; colValue
+SETINDEX 2
+NIP
+; end colValue
+; expValue
+;; fetch participantDB
+GETGLOB 10
+;; push identifier initiatorAddress
+PUSH S6
+SWAP
+; end expValue
+;; push identifier initiatorBalance
+PUSH S2
+; colValue
+UNTUPLE 3
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+PUSH S1
+STUR 256
+XCHG s3
+BLKDROP 3
+ENDC
+ROTREV
+PUSHINT 267
+DICTSETREF
+SETGLOB 10
+; end colValue
+;; index
+;; push identifier dbId
+PUSH S6
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+TUPLE 1
+;; decl: db
+;; delete
+; expValue
+DUP
+DUP
+INDEX 0
+;; push identifier initiatorAddress
+PUSH S8
+SWAP
+; end expValue
+PUSH S1
+SWAP
+PUSHINT 267
+DICTDEL
+DROP
+; colValue
+NIP
+SETINDEX 0
+NIP
+; end colValue
+; expValue
+;; fetch swapDirectDB
+GETGLOB 13
+UNPAIR
+;; push identifier dbId
+PUSH S9
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+; end expValue
+;; push identifier db
+PUSH S3
+; colValue
+UNTUPLE 1
+NEWC
+PUSH S1
+SWAP
+STDICT
+NIP
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 13
+; end colValue
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 8
+; end function finishDirectOrderWithTimeout
+
+.globl	createReversedOrder
+.public	createReversedOrder
+.type	createReversedOrder, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode dbId
+LDU 32
+; Decode value
+LDU 256
+; Decode minValue
+LDUQ 256
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 256
+}
+IFNOT
+; Decode exchangeRate
+LDUQ 256
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 256
+}
+IFNOT
+; Decode timeLockSlot
+LDUQ 32
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 32
+}
+IFNOT
+; Decode initiatorSourceAddress
+LDUQ 256
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 256
+}
+IFNOT
+ENDS
+;; param: dbId
+;; param: value
+;; param: minValue
+;; param: exchangeRate
+;; param: timeLockSlot
+;; param: initiatorSourceAddress
+; function createReversedOrder
+;; push identifier timeLockSlot
+PUSH S1
+PUSHINT 3600
+;; >=
+GEQ
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier timeLockSlot
+	PUSH S1
+	PUSHINT 604800
+	;; <=
+	LEQ
+}
+IF
+THROWIFNOT 105
+;; push identifier value
+PUSH S4
+PUSHINT 0
+;; uint256
+UFITS 256
+;; >
+GREATER
+THROWIFNOT 111
+;; push identifier minValue
+PUSH S3
+PUSHINT 0
+;; uint256
+UFITS 256
+;; >
+GREATER
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier minValue
+	PUSH S3
+	;; push identifier value
+	PUSH S5
+	;; <=
+	LEQ
+}
+IF
+THROWIFNOT 106
+;; push identifier exchangeRate
+PUSH S2
+PUSHINT 0
+;; uint256
+UFITS 256
+;; !=
+NEQ
+THROWIFNOT 107
+;; push identifier initiatorSourceAddress
+DUP
+PUSHINT 0
+;; uint256
+UFITS 256
+;; !=
+NEQ
+THROWIFNOT 109
+;; get member sender
+GETGLOB 9
+;; decl: sender
+;; push identifier dbId
+PUSH S6
+;; get member length
+;; push identifier swapReversedDB
+GETGLOB 14
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.exists
+;; push identifier sender
+DUP
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S7
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; !
+;; push identifier orderExists
+DUP
+NOT
+THROWIFNOT 113
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+PUSHINT 0
+PUSHINT 0
+TUPLE 11
+;; decl: newOrder
+; expValue
+DUP
+; end expValue
+FALSE
+; colValue
+SETINDEX 0
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier value
+PUSH S8
+; colValue
+SETINDEX 2
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier minValue
+PUSH S7
+; colValue
+SETINDEX 3
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier exchangeRate
+PUSH S6
+; colValue
+SETINDEX 4
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier timeLockSlot
+PUSH S5
+; colValue
+SETINDEX 5
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier initiatorSourceAddress
+PUSH S4
+; colValue
+SETINDEX 6
+NIP
+; end colValue
+;; map.add
+; expValue
+;; fetch swapReversedDB
+GETGLOB 14
+UNPAIR
+;; push identifier dbId
+PUSH S10
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+PUSH2 S1, S0
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+; end expValue
+;; push identifier newOrder
+PUSH S4
+UNTUPLE 11
+NEWC
+NEWC
+PUSH S6
+STUR 256
+PUSH S5
+STUR 256
+PUSH S4
+STSLICER
+STBREFR
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+STBREFR
+PUSH S11
+STIR 1
+PUSH S10
+STUR 32
+PUSH S9
+STUR 256
+PUSH S8
+STUR 256
+PUSH S7
+STUR 256
+PUSH S6
+STUR 32
+XCHG s11
+BLKDROP 11
+ENDC
+;; push identifier sender
+PUSH S7
+ROT
+PUSHINT 267
+DICTADDREF
+BLKSWAP 4, 1
+; colValue
+NEWC
+STDICT
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 14
+; end colValue
+DROP
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 9
+; end function createReversedOrder
+CALL $c7_to_c4$
+TRUE
+SETGLOB 7
+
+.globl	createReversedOrder_internal
+.type	createReversedOrder_internal, @function
+;; param: dbId
+;; param: value
+;; param: minValue
+;; param: exchangeRate
+;; param: timeLockSlot
+;; param: initiatorSourceAddress
+; function createReversedOrder
+;; push identifier timeLockSlot
+PUSH S1
+PUSHINT 3600
+;; >=
+GEQ
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier timeLockSlot
+	PUSH S1
+	PUSHINT 604800
+	;; <=
+	LEQ
+}
+IF
+THROWIFNOT 105
+;; push identifier value
+PUSH S4
+PUSHINT 0
+;; uint256
+UFITS 256
+;; >
+GREATER
+THROWIFNOT 111
+;; push identifier minValue
+PUSH S3
+PUSHINT 0
+;; uint256
+UFITS 256
+;; >
+GREATER
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier minValue
+	PUSH S3
+	;; push identifier value
+	PUSH S5
+	;; <=
+	LEQ
+}
+IF
+THROWIFNOT 106
+;; push identifier exchangeRate
+PUSH S2
+PUSHINT 0
+;; uint256
+UFITS 256
+;; !=
+NEQ
+THROWIFNOT 107
+;; push identifier initiatorSourceAddress
+DUP
+PUSHINT 0
+;; uint256
+UFITS 256
+;; !=
+NEQ
+THROWIFNOT 109
+;; get member sender
+GETGLOB 9
+;; decl: sender
+;; push identifier dbId
+PUSH S6
+;; get member length
+;; push identifier swapReversedDB
+GETGLOB 14
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.exists
+;; push identifier sender
+DUP
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S7
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; !
+;; push identifier orderExists
+DUP
+NOT
+THROWIFNOT 113
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+PUSHINT 0
+PUSHINT 0
+TUPLE 11
+;; decl: newOrder
+; expValue
+DUP
+; end expValue
+FALSE
+; colValue
+SETINDEX 0
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier value
+PUSH S8
+; colValue
+SETINDEX 2
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier minValue
+PUSH S7
+; colValue
+SETINDEX 3
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier exchangeRate
+PUSH S6
+; colValue
+SETINDEX 4
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier timeLockSlot
+PUSH S5
+; colValue
+SETINDEX 5
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; push identifier initiatorSourceAddress
+PUSH S4
+; colValue
+SETINDEX 6
+NIP
+; end colValue
+;; map.add
+; expValue
+;; fetch swapReversedDB
+GETGLOB 14
+UNPAIR
+;; push identifier dbId
+PUSH S10
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+PUSH2 S1, S0
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+; end expValue
+;; push identifier newOrder
+PUSH S4
+UNTUPLE 11
+NEWC
+NEWC
+PUSH S6
+STUR 256
+PUSH S5
+STUR 256
+PUSH S4
+STSLICER
+STBREFR
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+STBREFR
+PUSH S11
+STIR 1
+PUSH S10
+STUR 32
+PUSH S9
+STUR 256
+PUSH S8
+STUR 256
+PUSH S7
+STUR 256
+PUSH S6
+STUR 32
+XCHG s11
+BLKDROP 11
+ENDC
+;; push identifier sender
+PUSH S7
+ROT
+PUSHINT 267
+DICTADDREF
+BLKSWAP 4, 1
+; colValue
+NEWC
+STDICT
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 14
+; end colValue
+DROP
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 9
+; end function createReversedOrder
+
+.globl	deleteReversedOrder
+.public	deleteReversedOrder
+.type	deleteReversedOrder, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode dbId
+LDU 32
+ENDS
+;; param: dbId
+; function deleteReversedOrder
+;; get member sender
+GETGLOB 9
+;; decl: sender
+;; push identifier dbId
+PUSH S1
+;; get member length
+;; push identifier swapReversedDB
+GETGLOB 14
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.exists
+;; push identifier sender
+DUP
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S2
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; push identifier orderExists
+DUP
+THROWIFNOT 114
+;; index
+;; push identifier sender
+PUSH S1
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S3
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	LDU 256
+	PLDU 256
+	TUPLE 11
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 11
+}
+IFELSE
+;; decl: order
+;; !
+;; get member confirmed
+;; push identifier order
+DUP
+INDEX 0
+NOT
+THROWIFNOT 115
+;; index
+;; push identifier dbId
+PUSH S3
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+TUPLE 1
+;; decl: db
+;; delete
+; expValue
+DUP
+DUP
+INDEX 0
+;; push identifier sender
+PUSH S5
+SWAP
+; end expValue
+PUSH S1
+SWAP
+PUSHINT 267
+DICTDEL
+DROP
+; colValue
+NIP
+SETINDEX 0
+NIP
+; end colValue
+; expValue
+;; fetch swapReversedDB
+GETGLOB 14
+UNPAIR
+;; push identifier dbId
+PUSH S6
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+; end expValue
+;; push identifier db
+PUSH S3
+; colValue
+UNTUPLE 1
+NEWC
+PUSH S1
+SWAP
+STDICT
+NIP
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 14
+; end colValue
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 5
+; end function deleteReversedOrder
+CALL $c7_to_c4$
+TRUE
+SETGLOB 7
+
+.globl	deleteReversedOrder_internal
+.type	deleteReversedOrder_internal, @function
+;; param: dbId
+; function deleteReversedOrder
+;; get member sender
+GETGLOB 9
+;; decl: sender
+;; push identifier dbId
+PUSH S1
+;; get member length
+;; push identifier swapReversedDB
+GETGLOB 14
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.exists
+;; push identifier sender
+DUP
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S2
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; push identifier orderExists
+DUP
+THROWIFNOT 114
+;; index
+;; push identifier sender
+PUSH S1
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S3
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	LDU 256
+	PLDU 256
+	TUPLE 11
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 11
+}
+IFELSE
+;; decl: order
+;; !
+;; get member confirmed
+;; push identifier order
+DUP
+INDEX 0
+NOT
+THROWIFNOT 115
+;; index
+;; push identifier dbId
+PUSH S3
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+TUPLE 1
+;; decl: db
+;; delete
+; expValue
+DUP
+DUP
+INDEX 0
+;; push identifier sender
+PUSH S5
+SWAP
+; end expValue
+PUSH S1
+SWAP
+PUSHINT 267
+DICTDEL
+DROP
+; colValue
+NIP
+SETINDEX 0
+NIP
+; end colValue
+; expValue
+;; fetch swapReversedDB
+GETGLOB 14
+UNPAIR
+;; push identifier dbId
+PUSH S6
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+; end expValue
+;; push identifier db
+PUSH S3
+; colValue
+UNTUPLE 1
+NEWC
+PUSH S1
+SWAP
+STDICT
+NIP
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 14
+; end colValue
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 5
+; end function deleteReversedOrder
+
+.globl	confirmReversedOrder
+.public	confirmReversedOrder
+.type	confirmReversedOrder, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode dbId
+LDU 32
+; Decode value
+LDU 256
+; Decode initiatorAddress
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+; Decode confirmatorTargetAddress
+LDUQ 256
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 256
+}
+IFNOT
+; Decode secretHash
+LDUQ 256
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 256
+}
+IFNOT
+ENDS
+;; param: dbId
+;; param: value
+;; param: initiatorAddress
+;; param: confirmatorTargetAddress
+;; param: secretHash
+; function confirmReversedOrder
+;; push identifier value
+PUSH S3
+PUSHINT 0
+;; uint256
+UFITS 256
+;; >
+GREATER
+THROWIFNOT 111
+;; push identifier initiatorAddress
+PUSH S2
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+THROWIFNOT 110
+;; push identifier confirmatorTargetAddress
+PUSH S1
+PUSHINT 0
+;; uint256
+UFITS 256
+;; !=
+NEQ
+THROWIFNOT 109
+;; push identifier dbId
+PUSH S4
+;; get member length
+;; push identifier swapReversedDB
+GETGLOB 14
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.exists
+;; push identifier initiatorAddress
+PUSH S2
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S5
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; push identifier orderExists
+DUP
+THROWIFNOT 114
+;; index
+;; push identifier initiatorAddress
+PUSH S3
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S6
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	LDU 256
+	PLDU 256
+	TUPLE 11
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 11
+}
+IFELSE
+;; decl: order
+;; !
+;; get member confirmed
+;; push identifier order
+DUP
+INDEX 0
+NOT
+THROWIFNOT 115
+;; get member sender
+GETGLOB 9
+;; decl: sender
+;; map.exists
+;; push identifier sender
+DUP
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: balanceExists
+;; push identifier balanceExists
+DUP
+THROWIFNOT 103
+;; index
+;; push identifier sender
+PUSH S1
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+;; decl: balance
+;; push identifier value
+PUSH S8
+;; get member value
+;; push identifier balance
+PUSH S1
+INDEX 0
+;; <=
+LEQ
+THROWIFNOT 104
+;; push identifier value
+PUSH S8
+;; get member exchangeRate
+;; push identifier order
+PUSH S4
+INDEX 4
+CALL $muldivTon_internal$
+;; decl: foreignValue
+;; if
+;; push identifier dbId
+PUSH S10
+EQINT 0
+PUSHCONT {
+	;; push identifier foreignValue
+	DUP
+	;; get member foreignMinValue
+	;; push identifier order
+	PUSH S5
+	INDEX 3
+	PUSHINT 1000000000
+	;; -
+	SUB
+	UFITS 256
+	;; >=
+	GEQ
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		;; push identifier foreignValue
+		DUP
+		;; get member foreignValue
+		;; push identifier order
+		PUSH S5
+		INDEX 2
+		PUSHINT 1000000000
+		;; +
+		ADD
+		;; <=
+		LEQ
+	}
+	IF
+	THROWIFNOT 120
+}
+PUSHCONT {
+	;; if
+	;; push identifier dbId
+	PUSH S10
+	EQINT 1
+	PUSHCONT {
+		;; push identifier foreignValue
+		DUP
+		;; get member foreignMinValue
+		;; push identifier order
+		PUSH S5
+		INDEX 3
+		PUSHINT 100
+		;; -
+		SUB
+		UFITS 256
+		;; >=
+		GEQ
+		;; short-circuiting &&
+		DUP
+		PUSHCONT {
+			DROP
+			;; push identifier foreignValue
+			DUP
+			;; get member foreignValue
+			;; push identifier order
+			PUSH S5
+			INDEX 2
+			PUSHINT 100
+			;; +
+			ADD
+			;; <=
+			LEQ
+		}
+		IF
+		THROWIFNOT 120
+	}
+	PUSHCONT {
+		;; if
+		;; push identifier dbId
+		PUSH S10
+		EQINT 2
+		PUSHCONT {
+			;; push identifier foreignValue
+			DUP
+			;; get member foreignMinValue
+			;; push identifier order
+			PUSH S5
+			INDEX 3
+			PUSHINT 100
+			;; -
+			SUB
+			UFITS 256
+			;; >=
+			GEQ
+			;; short-circuiting &&
+			DUP
+			PUSHCONT {
+				DROP
+				;; push identifier foreignValue
+				DUP
+				;; get member foreignValue
+				;; push identifier order
+				PUSH S5
+				INDEX 2
+				PUSHINT 100
+				;; +
+				ADD
+				;; <=
+				LEQ
+			}
+			IF
+			THROWIFNOT 120
+		}
+		IF
+		;; end if
+	}
+	IFELSE
+	;; end if
+}
+IFELSE
+;; end if
+; expValue
+PUSH S4
+; end expValue
+;; push identifier value
+PUSH S10
+; colValue
+SETINDEX 7
+POP s5
+; end colValue
+; expValue
+PUSH S4
+; end expValue
+;; push identifier sender
+PUSH S4
+; colValue
+SETINDEX 8
+POP s5
+; end colValue
+; expValue
+PUSH S4
+; end expValue
+;; push identifier confirmatorTargetAddress
+PUSH S8
+; colValue
+SETINDEX 9
+POP s5
+; end colValue
+; expValue
+PUSH S4
+; end expValue
+;; push identifier secretHash
+PUSH S7
+; colValue
+SETINDEX 10
+POP s5
+; end colValue
+;; push identifier now
+NOW
+;; uint32
+UFITS 32
+; expValue
+PUSH S5
+; end expValue
+SWAP
+; colValue
+SETINDEX 1
+POP s5
+; end colValue
+; expValue
+PUSH S4
+; end expValue
+TRUE
+; colValue
+SETINDEX 0
+POP s5
+; end colValue
+;; map.replace
+; expValue
+;; fetch swapReversedDB
+GETGLOB 14
+UNPAIR
+;; push identifier dbId
+PUSH S12
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+PUSH2 S1, S0
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+; end expValue
+;; push identifier order
+PUSH S8
+UNTUPLE 11
+NEWC
+NEWC
+PUSH S6
+STUR 256
+PUSH S5
+STUR 256
+PUSH S4
+STSLICER
+STBREFR
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+STBREFR
+PUSH S11
+STIR 1
+PUSH S10
+STUR 32
+PUSH S9
+STUR 256
+PUSH S8
+STUR 256
+PUSH S7
+STUR 256
+PUSH S6
+STUR 32
+XCHG s11
+BLKDROP 11
+ENDC
+;; push identifier initiatorAddress
+PUSH S13
+ROT
+PUSHINT 267
+DICTREPLACEREF
+BLKSWAP 4, 1
+; colValue
+NEWC
+STDICT
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 14
+; end colValue
+DROP
+;; push identifier value
+PUSH S9
+; expValue
+PUSH S2
+DUP
+INDEX 0
+; end expValue
+ROT
+SUB
+UFITS 256
+; colValue
+SETINDEX 0
+POP s2
+; end colValue
+;; get member locked
+;; push identifier balance
+PUSH S1
+INDEX 2
+;; push identifier value
+PUSH S10
+CALL $add256_internal$
+; expValue
+PUSH S2
+; end expValue
+SWAP
+; colValue
+SETINDEX 2
+POP s2
+; end colValue
+; expValue
+;; fetch participantDB
+GETGLOB 10
+;; push identifier sender
+PUSH S4
+SWAP
+; end expValue
+;; push identifier balance
+PUSH S3
+; colValue
+UNTUPLE 3
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+PUSH S1
+STUR 256
+XCHG s3
+BLKDROP 3
+ENDC
+ROTREV
+PUSHINT 267
+DICTSETREF
+SETGLOB 10
+; end colValue
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 11
+; end function confirmReversedOrder
+CALL $c7_to_c4$
+TRUE
+SETGLOB 7
+
+.globl	confirmReversedOrder_internal
+.type	confirmReversedOrder_internal, @function
+;; param: dbId
+;; param: value
+;; param: initiatorAddress
+;; param: confirmatorTargetAddress
+;; param: secretHash
+; function confirmReversedOrder
+;; push identifier value
+PUSH S3
+PUSHINT 0
+;; uint256
+UFITS 256
+;; >
+GREATER
+THROWIFNOT 111
+;; push identifier initiatorAddress
+PUSH S2
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+THROWIFNOT 110
+;; push identifier confirmatorTargetAddress
+PUSH S1
+PUSHINT 0
+;; uint256
+UFITS 256
+;; !=
+NEQ
+THROWIFNOT 109
+;; push identifier dbId
+PUSH S4
+;; get member length
+;; push identifier swapReversedDB
+GETGLOB 14
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.exists
+;; push identifier initiatorAddress
+PUSH S2
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S5
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; push identifier orderExists
+DUP
+THROWIFNOT 114
+;; index
+;; push identifier initiatorAddress
+PUSH S3
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S6
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	LDU 256
+	PLDU 256
+	TUPLE 11
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 11
+}
+IFELSE
+;; decl: order
+;; !
+;; get member confirmed
+;; push identifier order
+DUP
+INDEX 0
+NOT
+THROWIFNOT 115
+;; get member sender
+GETGLOB 9
+;; decl: sender
+;; map.exists
+;; push identifier sender
+DUP
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: balanceExists
+;; push identifier balanceExists
+DUP
+THROWIFNOT 103
+;; index
+;; push identifier sender
+PUSH S1
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+;; decl: balance
+;; push identifier value
+PUSH S8
+;; get member value
+;; push identifier balance
+PUSH S1
+INDEX 0
+;; <=
+LEQ
+THROWIFNOT 104
+;; push identifier value
+PUSH S8
+;; get member exchangeRate
+;; push identifier order
+PUSH S4
+INDEX 4
+CALL $muldivTon_internal$
+;; decl: foreignValue
+;; if
+;; push identifier dbId
+PUSH S10
+EQINT 0
+PUSHCONT {
+	;; push identifier foreignValue
+	DUP
+	;; get member foreignMinValue
+	;; push identifier order
+	PUSH S5
+	INDEX 3
+	PUSHINT 1000000000
+	;; -
+	SUB
+	UFITS 256
+	;; >=
+	GEQ
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		;; push identifier foreignValue
+		DUP
+		;; get member foreignValue
+		;; push identifier order
+		PUSH S5
+		INDEX 2
+		PUSHINT 1000000000
+		;; +
+		ADD
+		;; <=
+		LEQ
+	}
+	IF
+	THROWIFNOT 120
+}
+PUSHCONT {
+	;; if
+	;; push identifier dbId
+	PUSH S10
+	EQINT 1
+	PUSHCONT {
+		;; push identifier foreignValue
+		DUP
+		;; get member foreignMinValue
+		;; push identifier order
+		PUSH S5
+		INDEX 3
+		PUSHINT 100
+		;; -
+		SUB
+		UFITS 256
+		;; >=
+		GEQ
+		;; short-circuiting &&
+		DUP
+		PUSHCONT {
+			DROP
+			;; push identifier foreignValue
+			DUP
+			;; get member foreignValue
+			;; push identifier order
+			PUSH S5
+			INDEX 2
+			PUSHINT 100
+			;; +
+			ADD
+			;; <=
+			LEQ
+		}
+		IF
+		THROWIFNOT 120
+	}
+	PUSHCONT {
+		;; if
+		;; push identifier dbId
+		PUSH S10
+		EQINT 2
+		PUSHCONT {
+			;; push identifier foreignValue
+			DUP
+			;; get member foreignMinValue
+			;; push identifier order
+			PUSH S5
+			INDEX 3
+			PUSHINT 100
+			;; -
+			SUB
+			UFITS 256
+			;; >=
+			GEQ
+			;; short-circuiting &&
+			DUP
+			PUSHCONT {
+				DROP
+				;; push identifier foreignValue
+				DUP
+				;; get member foreignValue
+				;; push identifier order
+				PUSH S5
+				INDEX 2
+				PUSHINT 100
+				;; +
+				ADD
+				;; <=
+				LEQ
+			}
+			IF
+			THROWIFNOT 120
+		}
+		IF
+		;; end if
+	}
+	IFELSE
+	;; end if
+}
+IFELSE
+;; end if
+; expValue
+PUSH S4
+; end expValue
+;; push identifier value
+PUSH S10
+; colValue
+SETINDEX 7
+POP s5
+; end colValue
+; expValue
+PUSH S4
+; end expValue
+;; push identifier sender
+PUSH S4
+; colValue
+SETINDEX 8
+POP s5
+; end colValue
+; expValue
+PUSH S4
+; end expValue
+;; push identifier confirmatorTargetAddress
+PUSH S8
+; colValue
+SETINDEX 9
+POP s5
+; end colValue
+; expValue
+PUSH S4
+; end expValue
+;; push identifier secretHash
+PUSH S7
+; colValue
+SETINDEX 10
+POP s5
+; end colValue
+;; push identifier now
+NOW
+;; uint32
+UFITS 32
+; expValue
+PUSH S5
+; end expValue
+SWAP
+; colValue
+SETINDEX 1
+POP s5
+; end colValue
+; expValue
+PUSH S4
+; end expValue
+TRUE
+; colValue
+SETINDEX 0
+POP s5
+; end colValue
+;; map.replace
+; expValue
+;; fetch swapReversedDB
+GETGLOB 14
+UNPAIR
+;; push identifier dbId
+PUSH S12
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+PUSH2 S1, S0
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+; end expValue
+;; push identifier order
+PUSH S8
+UNTUPLE 11
+NEWC
+NEWC
+PUSH S6
+STUR 256
+PUSH S5
+STUR 256
+PUSH S4
+STSLICER
+STBREFR
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+STBREFR
+PUSH S11
+STIR 1
+PUSH S10
+STUR 32
+PUSH S9
+STUR 256
+PUSH S8
+STUR 256
+PUSH S7
+STUR 256
+PUSH S6
+STUR 32
+XCHG s11
+BLKDROP 11
+ENDC
+;; push identifier initiatorAddress
+PUSH S13
+ROT
+PUSHINT 267
+DICTREPLACEREF
+BLKSWAP 4, 1
+; colValue
+NEWC
+STDICT
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 14
+; end colValue
+DROP
+;; push identifier value
+PUSH S9
+; expValue
+PUSH S2
+DUP
+INDEX 0
+; end expValue
+ROT
+SUB
+UFITS 256
+; colValue
+SETINDEX 0
+POP s2
+; end colValue
+;; get member locked
+;; push identifier balance
+PUSH S1
+INDEX 2
+;; push identifier value
+PUSH S10
+CALL $add256_internal$
+; expValue
+PUSH S2
+; end expValue
+SWAP
+; colValue
+SETINDEX 2
+POP s2
+; end colValue
+; expValue
+;; fetch participantDB
+GETGLOB 10
+;; push identifier sender
+PUSH S4
+SWAP
+; end expValue
+;; push identifier balance
+PUSH S3
+; colValue
+UNTUPLE 3
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+PUSH S1
+STUR 256
+XCHG s3
+BLKDROP 3
+ENDC
+ROTREV
+PUSHINT 267
+DICTSETREF
+SETGLOB 10
+; end colValue
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 11
+; end function confirmReversedOrder
+
+.globl	finishReversedOrderWithSecret
+.public	finishReversedOrderWithSecret
+.type	finishReversedOrderWithSecret, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode dbId
+LDU 32
+; Decode initiatorAddress
+LDMSGADDR
+; Decode secret
+LDREF
+ENDS
+;; param: dbId
+;; param: initiatorAddress
+;; param: secret
+; function finishReversedOrderWithSecret
+;; push identifier initiatorAddress
+PUSH S1
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+THROWIFNOT 110
+;; push identifier dbId
+PUSH S2
+;; get member length
+;; push identifier swapReversedDB
+GETGLOB 14
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.exists
+;; push identifier initiatorAddress
+PUSH S1
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S3
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; push identifier orderExists
+DUP
+THROWIFNOT 114
+;; index
+;; push identifier initiatorAddress
+PUSH S2
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S4
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	LDU 256
+	PLDU 256
+	TUPLE 11
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 11
+}
+IFELSE
+;; decl: order
+;; get member confirmed
+;; push identifier order
+DUP
+INDEX 0
+THROWIFNOT 116
+;; push identifier secret
+PUSH S2
+CTOS
+SHA256U
+;; get member secretHash
+;; push identifier order
+PUSH S1
+INDEX 10
+;; ==
+EQUAL
+THROWIFNOT 121
+;; map.exists
+;; get member confirmatorSourceAddress
+;; push identifier order
+DUP
+INDEX 8
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: balanceExists
+;; push identifier balanceExists
+DUP
+THROWIFNOT 103
+;; index
+;; get member confirmatorSourceAddress
+;; push identifier order
+PUSH S1
+INDEX 8
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+;; decl: confirmatorBalance
+;; get member locked
+;; push identifier confirmatorBalance
+DUP
+INDEX 2
+;; get member value
+;; push identifier order
+PUSH S3
+INDEX 7
+;; >=
+GEQ
+THROWIFNOT 117
+;; get member value
+;; push identifier order
+PUSH S2
+INDEX 7
+; expValue
+PUSH S1
+DUP
+INDEX 2
+; end expValue
+ROT
+SUB
+UFITS 256
+; colValue
+SETINDEX 2
+NIP
+; end colValue
+; expValue
+;; fetch participantDB
+GETGLOB 10
+;; get member confirmatorSourceAddress
+;; push identifier order
+PUSH S3
+INDEX 8
+SWAP
+; end expValue
+;; push identifier confirmatorBalance
+PUSH S2
+; colValue
+UNTUPLE 3
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+PUSH S1
+STUR 256
+XCHG s3
+BLKDROP 3
+ENDC
+ROTREV
+PUSHINT 267
+DICTSETREF
+SETGLOB 10
+; end colValue
+;; map.exists
+;; push identifier initiatorAddress
+PUSH S5
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: initiatorExists
+;; if
+;; push identifier initiatorExists
+DUP
+PUSHCONT {
+	;; index
+	;; push identifier initiatorAddress
+	PUSH S6
+	;; push identifier participantDB
+	GETGLOB 10
+	PUSHINT 267
+	DICTGETREF
+	PUSHCONT {
+		CTOS
+		LDU 256
+		LDU 256
+		PLDU 256
+		TUPLE 3
+	}
+	PUSHCONT {
+		PUSHINT 0
+		PUSHINT 0
+		PUSHINT 0
+		TUPLE 3
+	}
+	IFELSE
+	;; decl: initiatorBalance
+	;; get member value
+	;; push identifier initiatorBalance
+	DUP
+	INDEX 0
+	;; get member value
+	;; push identifier order
+	PUSH S5
+	INDEX 7
+	CALL $add256_internal$
+	; expValue
+	PUSH S1
+	; end expValue
+	SWAP
+	; colValue
+	SETINDEX 0
+	NIP
+	; end colValue
+	; expValue
+	;; fetch participantDB
+	GETGLOB 10
+	;; push identifier initiatorAddress
+	PUSH S8
+	SWAP
+	; end expValue
+	;; push identifier initiatorBalance
+	PUSH S2
+	; colValue
+	UNTUPLE 3
+	NEWC
+	PUSH S3
+	STUR 256
+	PUSH S2
+	STUR 256
+	PUSH S1
+	STUR 256
+	XCHG s3
+	BLKDROP 3
+	ENDC
+	ROTREV
+	PUSHINT 267
+	DICTSETREF
+	SETGLOB 10
+	; end colValue
+	DROP
+}
+PUSHCONT {
+	;; get member value
+	;; push identifier order
+	PUSH S3
+	INDEX 7
+	PUSHINT 0
+	;; uint256
+	UFITS 256
+	PUSHINT 0
+	;; uint256
+	UFITS 256
+	TUPLE 3
+	; expValue
+	;; fetch participantDB
+	GETGLOB 10
+	;; push identifier initiatorAddress
+	PUSH S8
+	SWAP
+	; end expValue
+	ROT
+	; colValue
+	UNTUPLE 3
+	NEWC
+	PUSH S3
+	STUR 256
+	PUSH S2
+	STUR 256
+	PUSH S1
+	STUR 256
+	XCHG s3
+	BLKDROP 3
+	ENDC
+	ROTREV
+	PUSHINT 267
+	DICTSETREF
+	SETGLOB 10
+	; end colValue
+}
+IFELSE
+;; end if
+;; index
+;; push identifier dbId
+PUSH S7
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+TUPLE 1
+;; decl: db
+;; delete
+; expValue
+DUP
+DUP
+INDEX 0
+;; push identifier initiatorAddress
+PUSH S9
+SWAP
+; end expValue
+PUSH S1
+SWAP
+PUSHINT 267
+DICTDEL
+DROP
+; colValue
+NIP
+SETINDEX 0
+NIP
+; end colValue
+; expValue
+;; fetch swapReversedDB
+GETGLOB 14
+UNPAIR
+;; push identifier dbId
+PUSH S10
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+; end expValue
+;; push identifier db
+PUSH S3
+; colValue
+UNTUPLE 1
+NEWC
+PUSH S1
+SWAP
+STDICT
+NIP
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 14
+; end colValue
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 9
+; end function finishReversedOrderWithSecret
+CALL $c7_to_c4$
+TRUE
+SETGLOB 7
+
+.globl	finishReversedOrderWithSecret_internal
+.type	finishReversedOrderWithSecret_internal, @function
+;; param: dbId
+;; param: initiatorAddress
+;; param: secret
+; function finishReversedOrderWithSecret
+;; push identifier initiatorAddress
+PUSH S1
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+THROWIFNOT 110
+;; push identifier dbId
+PUSH S2
+;; get member length
+;; push identifier swapReversedDB
+GETGLOB 14
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.exists
+;; push identifier initiatorAddress
+PUSH S1
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S3
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; push identifier orderExists
+DUP
+THROWIFNOT 114
+;; index
+;; push identifier initiatorAddress
+PUSH S2
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S4
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	LDU 256
+	PLDU 256
+	TUPLE 11
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 11
+}
+IFELSE
+;; decl: order
+;; get member confirmed
+;; push identifier order
+DUP
+INDEX 0
+THROWIFNOT 116
+;; push identifier secret
+PUSH S2
+CTOS
+SHA256U
+;; get member secretHash
+;; push identifier order
+PUSH S1
+INDEX 10
+;; ==
+EQUAL
+THROWIFNOT 121
+;; map.exists
+;; get member confirmatorSourceAddress
+;; push identifier order
+DUP
+INDEX 8
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: balanceExists
+;; push identifier balanceExists
+DUP
+THROWIFNOT 103
+;; index
+;; get member confirmatorSourceAddress
+;; push identifier order
+PUSH S1
+INDEX 8
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+;; decl: confirmatorBalance
+;; get member locked
+;; push identifier confirmatorBalance
+DUP
+INDEX 2
+;; get member value
+;; push identifier order
+PUSH S3
+INDEX 7
+;; >=
+GEQ
+THROWIFNOT 117
+;; get member value
+;; push identifier order
+PUSH S2
+INDEX 7
+; expValue
+PUSH S1
+DUP
+INDEX 2
+; end expValue
+ROT
+SUB
+UFITS 256
+; colValue
+SETINDEX 2
+NIP
+; end colValue
+; expValue
+;; fetch participantDB
+GETGLOB 10
+;; get member confirmatorSourceAddress
+;; push identifier order
+PUSH S3
+INDEX 8
+SWAP
+; end expValue
+;; push identifier confirmatorBalance
+PUSH S2
+; colValue
+UNTUPLE 3
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+PUSH S1
+STUR 256
+XCHG s3
+BLKDROP 3
+ENDC
+ROTREV
+PUSHINT 267
+DICTSETREF
+SETGLOB 10
+; end colValue
+;; map.exists
+;; push identifier initiatorAddress
+PUSH S5
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: initiatorExists
+;; if
+;; push identifier initiatorExists
+DUP
+PUSHCONT {
+	;; index
+	;; push identifier initiatorAddress
+	PUSH S6
+	;; push identifier participantDB
+	GETGLOB 10
+	PUSHINT 267
+	DICTGETREF
+	PUSHCONT {
+		CTOS
+		LDU 256
+		LDU 256
+		PLDU 256
+		TUPLE 3
+	}
+	PUSHCONT {
+		PUSHINT 0
+		PUSHINT 0
+		PUSHINT 0
+		TUPLE 3
+	}
+	IFELSE
+	;; decl: initiatorBalance
+	;; get member value
+	;; push identifier initiatorBalance
+	DUP
+	INDEX 0
+	;; get member value
+	;; push identifier order
+	PUSH S5
+	INDEX 7
+	CALL $add256_internal$
+	; expValue
+	PUSH S1
+	; end expValue
+	SWAP
+	; colValue
+	SETINDEX 0
+	NIP
+	; end colValue
+	; expValue
+	;; fetch participantDB
+	GETGLOB 10
+	;; push identifier initiatorAddress
+	PUSH S8
+	SWAP
+	; end expValue
+	;; push identifier initiatorBalance
+	PUSH S2
+	; colValue
+	UNTUPLE 3
+	NEWC
+	PUSH S3
+	STUR 256
+	PUSH S2
+	STUR 256
+	PUSH S1
+	STUR 256
+	XCHG s3
+	BLKDROP 3
+	ENDC
+	ROTREV
+	PUSHINT 267
+	DICTSETREF
+	SETGLOB 10
+	; end colValue
+	DROP
+}
+PUSHCONT {
+	;; get member value
+	;; push identifier order
+	PUSH S3
+	INDEX 7
+	PUSHINT 0
+	;; uint256
+	UFITS 256
+	PUSHINT 0
+	;; uint256
+	UFITS 256
+	TUPLE 3
+	; expValue
+	;; fetch participantDB
+	GETGLOB 10
+	;; push identifier initiatorAddress
+	PUSH S8
+	SWAP
+	; end expValue
+	ROT
+	; colValue
+	UNTUPLE 3
+	NEWC
+	PUSH S3
+	STUR 256
+	PUSH S2
+	STUR 256
+	PUSH S1
+	STUR 256
+	XCHG s3
+	BLKDROP 3
+	ENDC
+	ROTREV
+	PUSHINT 267
+	DICTSETREF
+	SETGLOB 10
+	; end colValue
+}
+IFELSE
+;; end if
+;; index
+;; push identifier dbId
+PUSH S7
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+TUPLE 1
+;; decl: db
+;; delete
+; expValue
+DUP
+DUP
+INDEX 0
+;; push identifier initiatorAddress
+PUSH S9
+SWAP
+; end expValue
+PUSH S1
+SWAP
+PUSHINT 267
+DICTDEL
+DROP
+; colValue
+NIP
+SETINDEX 0
+NIP
+; end colValue
+; expValue
+;; fetch swapReversedDB
+GETGLOB 14
+UNPAIR
+;; push identifier dbId
+PUSH S10
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+; end expValue
+;; push identifier db
+PUSH S3
+; colValue
+UNTUPLE 1
+NEWC
+PUSH S1
+SWAP
+STDICT
+NIP
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 14
+; end colValue
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 9
+; end function finishReversedOrderWithSecret
+
+.globl	finishReversedOrderWithTimeout
+.public	finishReversedOrderWithTimeout
+.type	finishReversedOrderWithTimeout, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode dbId
+LDU 32
+; Decode initiatorAddress
+LDMSGADDR
+ENDS
+;; param: dbId
+;; param: initiatorAddress
+; function finishReversedOrderWithTimeout
+;; push identifier initiatorAddress
+DUP
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+THROWIFNOT 110
+;; push identifier dbId
+PUSH S1
+;; get member length
+;; push identifier swapReversedDB
+GETGLOB 14
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.exists
+;; push identifier initiatorAddress
+DUP
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S2
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; push identifier orderExists
+DUP
+THROWIFNOT 114
+;; index
+;; push identifier initiatorAddress
+PUSH S1
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S3
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	LDU 256
+	PLDU 256
+	TUPLE 11
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 11
+}
+IFELSE
+;; decl: order
+;; get member confirmed
+;; push identifier order
+DUP
+INDEX 0
+THROWIFNOT 116
+;; get member confirmTime
+;; push identifier order
+DUP
+INDEX 1
+PUSHINT 3
+;; get member timeLockSlot
+;; push identifier order
+PUSH S2
+INDEX 5
+;; *
+MUL
+UFITS 32
+;; +
+ADD
+UFITS 32
+;; decl: expireAt
+;; push identifier expireAt
+DUP
+;; push identifier now
+NOW
+;; uint32
+UFITS 32
+;; <
+LESS
+THROWIFNOT 122
+;; map.exists
+;; get member confirmatorSourceAddress
+;; push identifier order
+PUSH S1
+INDEX 8
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: balanceExists
+;; push identifier balanceExists
+DUP
+THROWIFNOT 103
+;; index
+;; get member confirmatorSourceAddress
+;; push identifier order
+PUSH S2
+INDEX 8
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+;; decl: confirmatorBalance
+;; get member value
+;; push identifier confirmatorBalance
+DUP
+INDEX 0
+;; get member value
+;; push identifier order
+PUSH S4
+INDEX 7
+CALL $add256_internal$
+; expValue
+PUSH S1
+; end expValue
+SWAP
+; colValue
+SETINDEX 0
+NIP
+; end colValue
+;; get member locked
+;; push identifier confirmatorBalance
+DUP
+INDEX 2
+;; get member value
+;; push identifier order
+PUSH S4
+INDEX 7
+;; >=
+GEQ
+THROWIFNOT 117
+;; get member value
+;; push identifier order
+PUSH S3
+INDEX 7
+; expValue
+PUSH S1
+DUP
+INDEX 2
+; end expValue
+ROT
+SUB
+UFITS 256
+; colValue
+SETINDEX 2
+NIP
+; end colValue
+; expValue
+;; fetch participantDB
+GETGLOB 10
+;; get member confirmatorSourceAddress
+;; push identifier order
+PUSH S4
+INDEX 8
+SWAP
+; end expValue
+;; push identifier confirmatorBalance
+PUSH S2
+; colValue
+UNTUPLE 3
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+PUSH S1
+STUR 256
+XCHG s3
+BLKDROP 3
+ENDC
+ROTREV
+PUSHINT 267
+DICTSETREF
+SETGLOB 10
+; end colValue
+;; index
+;; push identifier dbId
+PUSH S6
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+TUPLE 1
+;; decl: db
+;; delete
+; expValue
+DUP
+DUP
+INDEX 0
+;; push identifier initiatorAddress
+PUSH S8
+SWAP
+; end expValue
+PUSH S1
+SWAP
+PUSHINT 267
+DICTDEL
+DROP
+; colValue
+NIP
+SETINDEX 0
+NIP
+; end colValue
+; expValue
+;; fetch swapReversedDB
+GETGLOB 14
+UNPAIR
+;; push identifier dbId
+PUSH S9
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+; end expValue
+;; push identifier db
+PUSH S3
+; colValue
+UNTUPLE 1
+NEWC
+PUSH S1
+SWAP
+STDICT
+NIP
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 14
+; end colValue
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 8
+; end function finishReversedOrderWithTimeout
+CALL $c7_to_c4$
+TRUE
+SETGLOB 7
+
+.globl	finishReversedOrderWithTimeout_internal
+.type	finishReversedOrderWithTimeout_internal, @function
+;; param: dbId
+;; param: initiatorAddress
+; function finishReversedOrderWithTimeout
+;; push identifier initiatorAddress
+DUP
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+THROWIFNOT 110
+;; push identifier dbId
+PUSH S1
+;; get member length
+;; push identifier swapReversedDB
+GETGLOB 14
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.exists
+;; push identifier initiatorAddress
+DUP
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S2
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: orderExists
+;; push identifier orderExists
+DUP
+THROWIFNOT 114
+;; index
+;; push identifier initiatorAddress
+PUSH S1
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S3
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	LDU 256
+	PLDU 256
+	TUPLE 11
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 11
+}
+IFELSE
+;; decl: order
+;; get member confirmed
+;; push identifier order
+DUP
+INDEX 0
+THROWIFNOT 116
+;; get member confirmTime
+;; push identifier order
+DUP
+INDEX 1
+PUSHINT 3
+;; get member timeLockSlot
+;; push identifier order
+PUSH S2
+INDEX 5
+;; *
+MUL
+UFITS 32
+;; +
+ADD
+UFITS 32
+;; decl: expireAt
+;; push identifier expireAt
+DUP
+;; push identifier now
+NOW
+;; uint32
+UFITS 32
+;; <
+LESS
+THROWIFNOT 122
+;; map.exists
+;; get member confirmatorSourceAddress
+;; push identifier order
+PUSH S1
+INDEX 8
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; decl: balanceExists
+;; push identifier balanceExists
+DUP
+THROWIFNOT 103
+;; index
+;; get member confirmatorSourceAddress
+;; push identifier order
+PUSH S2
+INDEX 8
+;; push identifier participantDB
+GETGLOB 10
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDU 256
+	LDU 256
+	PLDU 256
+	TUPLE 3
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 3
+}
+IFELSE
+;; decl: confirmatorBalance
+;; get member value
+;; push identifier confirmatorBalance
+DUP
+INDEX 0
+;; get member value
+;; push identifier order
+PUSH S4
+INDEX 7
+CALL $add256_internal$
+; expValue
+PUSH S1
+; end expValue
+SWAP
+; colValue
+SETINDEX 0
+NIP
+; end colValue
+;; get member locked
+;; push identifier confirmatorBalance
+DUP
+INDEX 2
+;; get member value
+;; push identifier order
+PUSH S4
+INDEX 7
+;; >=
+GEQ
+THROWIFNOT 117
+;; get member value
+;; push identifier order
+PUSH S3
+INDEX 7
+; expValue
+PUSH S1
+DUP
+INDEX 2
+; end expValue
+ROT
+SUB
+UFITS 256
+; colValue
+SETINDEX 2
+NIP
+; end colValue
+; expValue
+;; fetch participantDB
+GETGLOB 10
+;; get member confirmatorSourceAddress
+;; push identifier order
+PUSH S4
+INDEX 8
+SWAP
+; end expValue
+;; push identifier confirmatorBalance
+PUSH S2
+; colValue
+UNTUPLE 3
+NEWC
+PUSH S3
+STUR 256
+PUSH S2
+STUR 256
+PUSH S1
+STUR 256
+XCHG s3
+BLKDROP 3
+ENDC
+ROTREV
+PUSHINT 267
+DICTSETREF
+SETGLOB 10
+; end colValue
+;; index
+;; push identifier dbId
+PUSH S6
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+TUPLE 1
+;; decl: db
+;; delete
+; expValue
+DUP
+DUP
+INDEX 0
+;; push identifier initiatorAddress
+PUSH S8
+SWAP
+; end expValue
+PUSH S1
+SWAP
+PUSHINT 267
+DICTDEL
+DROP
+; colValue
+NIP
+SETINDEX 0
+NIP
+; end colValue
+; expValue
+;; fetch swapReversedDB
+GETGLOB 14
+UNPAIR
+;; push identifier dbId
+PUSH S9
+SWAP
+PUSH2 s1,s2
+LESS
+THROWIFNOT 50
+; end expValue
+;; push identifier db
+PUSH S3
+; colValue
+UNTUPLE 1
+NEWC
+PUSH S1
+SWAP
+STDICT
+NIP
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 14
+; end colValue
+;; transfer()
+PUSHINT 0
+;; uint128
+UFITS 128
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x42_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+ENDC
+PUSHINT 64
+SENDRAWMSG
+BLKDROP 8
+; end function finishReversedOrderWithTimeout
+
+.globl	add256_internal
+.type	add256_internal, @function
+;; param: a
+;; param: b
+; function add256
+;; push identifier a
+PUSH S1
+;; push identifier b
+PUSH S1
+;; +
+ADD
+;; decl: c
+;; push identifier c
+DUP
+;; push identifier a
+PUSH S3
+;; >=
+GEQ
+THROWIFNOT 118
+;; return
+NIP
+NIP
+; end function add256
+
+.globl	muldivTon_internal
+.type	muldivTon_internal, @function
+;; param: a
+;; param: b
+; function muldivTon
+;; push identifier a
+PUSH S1
+;; push identifier b
+PUSH S1
+;; *
+MUL
+;; decl: c
+;; push identifier c
+DUP
+PUSHINT 100000000000
+;; uint256
+UFITS 256
+;; >=
+GEQ
+THROWIFNOT 119
+;; return
+;; push identifier a
+PUSH S2
+;; push identifier b
+PUSH S2
+PUSHINT 1000000000
+;; uint256
+UFITS 256
+MULDIVR
+UFITS 256
+XCHG s3
+BLKDROP 3
+; end function muldivTon
+
+.globl	calcForeignOutput
+.public	calcForeignOutput
+.type	calcForeignOutput, @function
+; Decode input parameters
+; Decode value
+LDU 256
+; Decode exchangeRate
+LDUQ 256
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 256
+}
+IFNOT
+ENDS
+;; param: value
+;; param: exchangeRate
+; function calcForeignOutput
+;; ret param: foreignValue
+PUSHINT 0
+;; push identifier value
+PUSH S2
+;; push identifier exchangeRate
+PUSH S2
+CALL $muldivTon_internal$
+; expValue
+; end expValue
+; colValue
+NIP
+; end colValue
+;; returning named params
+ROTREV
+DROP2
+;; emitting 1 value(s)
+PUSH S1
+EQINT -1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 96
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	STSLICECONST x9dd422eb
+	PUSH S1
+	STUR 256
+	ENDC
+	PUSHINT 1
+	SENDRAWMSG
+}
+IF
+DROP
+; end function calcForeignOutput
+EQINT -1
+PUSHCONT {
+	CALL $c7_to_c4$
+}
+IF
+TRUE
+SETGLOB 7
+
+.globl	calcForeignOutput_internal
+.type	calcForeignOutput_internal, @function
+;; param: value
+;; param: exchangeRate
+; function calcForeignOutput
+;; ret param: foreignValue
+PUSHINT 0
+;; push identifier value
+PUSH S2
+;; push identifier exchangeRate
+PUSH S2
+CALL $muldivTon_internal$
+; expValue
+; end expValue
+; colValue
+NIP
+; end colValue
+;; returning named params
+ROTREV
+DROP2
+; end function calcForeignOutput
+
+.globl	getDirectOrders
+.public	getDirectOrders
+.type	getDirectOrders, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode dbId
+LDU 32
+ENDS
+;; param: dbId
+; function getDirectOrders
+;; ret param: orders
+PUSHINT 0
+NEWDICT
+PAIR
+;; push identifier dbId
+PUSH S1
+;; get member length
+;; push identifier swapDirectDB
+GETGLOB 13
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.min
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S1
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTMINREF
+PUSHCONT {
+	SWAP
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	PLDU 256
+	TUPLE 10
+	TUPLE 2
+}
+PUSHCONT {
+	NULL
+}
+IFELSE
+;; decl: minPair
+;; if
+;; push identifier minPair
+DUP
+ISNULL
+PUSHCONT {
+	;; push identifier minPair
+	DUP
+	DUP
+	ISNULL
+	THROWIF 63
+	UNTUPLE 2
+	;; decl: key
+	;; decl: value
+	;; if
+	;; !
+	;; get member confirmed
+	;; push identifier value
+	DUP
+	INDEX 0
+	PUSHCONT {
+		; expValue
+		PUSH S3
+		; end expValue
+		;; push identifier key
+		PUSH S2
+		;; array.push(..)
+		SWAP
+		UNPAIR
+		PUSH S1
+		INC
+		XCHG s3
+		ROTREV
+		PUSHINT 32
+		DICTUSET
+		PAIR
+		; colValue
+		POP s4
+		; end colValue
+	}
+	IFNOT
+	;; end if
+	; while
+	FALSE ; decl return flag
+	PUSHCONT {
+		DUP
+		LESSINT 2
+		DUP
+		PUSHCONT {
+			DROP
+			TRUE
+		}
+		IF
+	}
+	PUSHCONT {
+		;; map.next
+		;; push identifier key
+		PUSH S2
+		;; get member orders
+		;; index
+		;; push identifier dbId
+		PUSH S6
+		;; push identifier swapDirectDB
+		GETGLOB 13
+		INDEX 1
+		PUSHINT 32
+		DICTUGET
+		THROWIFNOT 50
+		PLDDICT
+		PUSHINT 267
+		DICTGETNEXT
+		PUSHCONT {
+			SWAP
+			LDREFRTOS
+			NIP
+			LDREF
+			LDREF
+			LDI 1
+			LDU 32
+			LDU 256
+			LDU 256
+			LDU 256
+			PLDU 32
+			BLKSWAP 1, 7
+			CTOS
+			LDU 256
+			LDU 256
+			BLKSWAP 1, 9
+			CTOS
+			PLDU 256
+			TUPLE 10
+			TUPLE 2
+		}
+		PUSHCONT {
+			NULL
+		}
+		IFELSE
+		;; decl: nextPair
+		;; if
+		FALSE ; decl return flag
+		;; push identifier nextPair
+		PUSH S1
+		ISNULL
+		NOT
+		PUSHCONT {
+			;; push identifier nextPair
+			PUSH S1
+			DUP
+			ISNULL
+			THROWIF 63
+			UNTUPLE 2
+			;; decl: nextKey
+			;; decl: nextValue
+			;; if
+			;; !
+			;; get member confirmed
+			;; push identifier nextValue
+			DUP
+			INDEX 0
+			PUSHCONT {
+				; expValue
+				PUSH S8
+				; end expValue
+				;; push identifier nextKey
+				PUSH S2
+				;; array.push(..)
+				SWAP
+				UNPAIR
+				PUSH S1
+				INC
+				XCHG s3
+				ROTREV
+				PUSHINT 32
+				DICTUSET
+				PAIR
+				; colValue
+				POP s9
+				; end colValue
+			}
+			IFNOT
+			;; end if
+			; expValue
+			; end expValue
+			;; push identifier nextKey
+			PUSH S1
+			; colValue
+			POP s7
+			; end colValue
+			DROP2
+		}
+		PUSHCONT {
+			;; break
+			BLKDROP 3
+			PUSHINT 2
+			RET
+		}
+		IFELSE
+		DUP
+		IFRET
+		DROP
+		;; end if
+		DROP
+	}
+	WHILE
+	DROP
+	; end while
+	DROP2
+}
+IFNOT
+;; end if
+;; return
+;; push identifier orders
+PUSH S1
+XCHG s3
+BLKDROP 3
+;; emitting 1 value(s)
+PUSH S1
+EQINT -1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 96
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	STSLICECONST xa900ec35
+	PUSH S1
+	UNPAIR
+	XCHG s2
+	STU 32
+	STDICT
+	ENDC
+	PUSHINT 1
+	SENDRAWMSG
+}
+IF
+DROP
+; end function getDirectOrders
+EQINT -1
+PUSHCONT {
+	CALL $c7_to_c4$
+}
+IF
+TRUE
+SETGLOB 7
+
+.globl	getDirectOrders_internal
+.type	getDirectOrders_internal, @function
+;; param: dbId
+; function getDirectOrders
+;; ret param: orders
+PUSHINT 0
+NEWDICT
+PAIR
+;; push identifier dbId
+PUSH S1
+;; get member length
+;; push identifier swapDirectDB
+GETGLOB 13
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.min
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S1
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTMINREF
+PUSHCONT {
+	SWAP
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	PLDU 256
+	TUPLE 10
+	TUPLE 2
+}
+PUSHCONT {
+	NULL
+}
+IFELSE
+;; decl: minPair
+;; if
+;; push identifier minPair
+DUP
+ISNULL
+PUSHCONT {
+	;; push identifier minPair
+	DUP
+	DUP
+	ISNULL
+	THROWIF 63
+	UNTUPLE 2
+	;; decl: key
+	;; decl: value
+	;; if
+	;; !
+	;; get member confirmed
+	;; push identifier value
+	DUP
+	INDEX 0
+	PUSHCONT {
+		; expValue
+		PUSH S3
+		; end expValue
+		;; push identifier key
+		PUSH S2
+		;; array.push(..)
+		SWAP
+		UNPAIR
+		PUSH S1
+		INC
+		XCHG s3
+		ROTREV
+		PUSHINT 32
+		DICTUSET
+		PAIR
+		; colValue
+		POP s4
+		; end colValue
+	}
+	IFNOT
+	;; end if
+	; while
+	FALSE ; decl return flag
+	PUSHCONT {
+		DUP
+		LESSINT 2
+		DUP
+		PUSHCONT {
+			DROP
+			TRUE
+		}
+		IF
+	}
+	PUSHCONT {
+		;; map.next
+		;; push identifier key
+		PUSH S2
+		;; get member orders
+		;; index
+		;; push identifier dbId
+		PUSH S6
+		;; push identifier swapDirectDB
+		GETGLOB 13
+		INDEX 1
+		PUSHINT 32
+		DICTUGET
+		THROWIFNOT 50
+		PLDDICT
+		PUSHINT 267
+		DICTGETNEXT
+		PUSHCONT {
+			SWAP
+			LDREFRTOS
+			NIP
+			LDREF
+			LDREF
+			LDI 1
+			LDU 32
+			LDU 256
+			LDU 256
+			LDU 256
+			PLDU 32
+			BLKSWAP 1, 7
+			CTOS
+			LDU 256
+			LDU 256
+			BLKSWAP 1, 9
+			CTOS
+			PLDU 256
+			TUPLE 10
+			TUPLE 2
+		}
+		PUSHCONT {
+			NULL
+		}
+		IFELSE
+		;; decl: nextPair
+		;; if
+		FALSE ; decl return flag
+		;; push identifier nextPair
+		PUSH S1
+		ISNULL
+		NOT
+		PUSHCONT {
+			;; push identifier nextPair
+			PUSH S1
+			DUP
+			ISNULL
+			THROWIF 63
+			UNTUPLE 2
+			;; decl: nextKey
+			;; decl: nextValue
+			;; if
+			;; !
+			;; get member confirmed
+			;; push identifier nextValue
+			DUP
+			INDEX 0
+			PUSHCONT {
+				; expValue
+				PUSH S8
+				; end expValue
+				;; push identifier nextKey
+				PUSH S2
+				;; array.push(..)
+				SWAP
+				UNPAIR
+				PUSH S1
+				INC
+				XCHG s3
+				ROTREV
+				PUSHINT 32
+				DICTUSET
+				PAIR
+				; colValue
+				POP s9
+				; end colValue
+			}
+			IFNOT
+			;; end if
+			; expValue
+			; end expValue
+			;; push identifier nextKey
+			PUSH S1
+			; colValue
+			POP s7
+			; end colValue
+			DROP2
+		}
+		PUSHCONT {
+			;; break
+			BLKDROP 3
+			PUSHINT 2
+			RET
+		}
+		IFELSE
+		DUP
+		IFRET
+		DROP
+		;; end if
+		DROP
+	}
+	WHILE
+	DROP
+	; end while
+	DROP2
+}
+IFNOT
+;; end if
+;; return
+;; push identifier orders
+PUSH S1
+XCHG s3
+BLKDROP 3
+; end function getDirectOrders
+
+.globl	getReversedOrders
+.public	getReversedOrders
+.type	getReversedOrders, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode dbId
+LDU 32
+ENDS
+;; param: dbId
+; function getReversedOrders
+;; ret param: orders
+PUSHINT 0
+NEWDICT
+PAIR
+;; push identifier dbId
+PUSH S1
+;; get member length
+;; push identifier swapReversedDB
+GETGLOB 14
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.min
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S1
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTMINREF
+PUSHCONT {
+	SWAP
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	LDU 256
+	PLDU 256
+	TUPLE 11
+	TUPLE 2
+}
+PUSHCONT {
+	NULL
+}
+IFELSE
+;; decl: minPair
+;; if
+;; push identifier minPair
+DUP
+ISNULL
+PUSHCONT {
+	;; push identifier minPair
+	DUP
+	DUP
+	ISNULL
+	THROWIF 63
+	UNTUPLE 2
+	;; decl: key
+	;; decl: value
+	;; if
+	;; !
+	;; get member confirmed
+	;; push identifier value
+	DUP
+	INDEX 0
+	PUSHCONT {
+		; expValue
+		PUSH S3
+		; end expValue
+		;; push identifier key
+		PUSH S2
+		;; array.push(..)
+		SWAP
+		UNPAIR
+		PUSH S1
+		INC
+		XCHG s3
+		ROTREV
+		PUSHINT 32
+		DICTUSET
+		PAIR
+		; colValue
+		POP s4
+		; end colValue
+	}
+	IFNOT
+	;; end if
+	; while
+	FALSE ; decl return flag
+	PUSHCONT {
+		DUP
+		LESSINT 2
+		DUP
+		PUSHCONT {
+			DROP
+			TRUE
+		}
+		IF
+	}
+	PUSHCONT {
+		;; map.next
+		;; push identifier key
+		PUSH S2
+		;; get member orders
+		;; index
+		;; push identifier dbId
+		PUSH S6
+		;; push identifier swapReversedDB
+		GETGLOB 14
+		INDEX 1
+		PUSHINT 32
+		DICTUGET
+		THROWIFNOT 50
+		PLDDICT
+		PUSHINT 267
+		DICTGETNEXT
+		PUSHCONT {
+			SWAP
+			LDREFRTOS
+			NIP
+			LDREF
+			LDREF
+			LDI 1
+			LDU 32
+			LDU 256
+			LDU 256
+			LDU 256
+			PLDU 32
+			BLKSWAP 1, 7
+			CTOS
+			LDU 256
+			LDU 256
+			BLKSWAP 1, 9
+			CTOS
+			LDU 256
+			PLDU 256
+			TUPLE 11
+			TUPLE 2
+		}
+		PUSHCONT {
+			NULL
+		}
+		IFELSE
+		;; decl: nextPair
+		;; if
+		FALSE ; decl return flag
+		;; push identifier nextPair
+		PUSH S1
+		ISNULL
+		NOT
+		PUSHCONT {
+			;; push identifier nextPair
+			PUSH S1
+			DUP
+			ISNULL
+			THROWIF 63
+			UNTUPLE 2
+			;; decl: nextKey
+			;; decl: nextValue
+			;; if
+			;; !
+			;; get member confirmed
+			;; push identifier nextValue
+			DUP
+			INDEX 0
+			PUSHCONT {
+				; expValue
+				PUSH S8
+				; end expValue
+				;; push identifier nextKey
+				PUSH S2
+				;; array.push(..)
+				SWAP
+				UNPAIR
+				PUSH S1
+				INC
+				XCHG s3
+				ROTREV
+				PUSHINT 32
+				DICTUSET
+				PAIR
+				; colValue
+				POP s9
+				; end colValue
+			}
+			IFNOT
+			;; end if
+			; expValue
+			; end expValue
+			;; push identifier nextKey
+			PUSH S1
+			; colValue
+			POP s7
+			; end colValue
+			DROP2
+		}
+		PUSHCONT {
+			;; break
+			BLKDROP 3
+			PUSHINT 2
+			RET
+		}
+		IFELSE
+		DUP
+		IFRET
+		DROP
+		;; end if
+		DROP
+	}
+	WHILE
+	DROP
+	; end while
+	DROP2
+}
+IFNOT
+;; end if
+;; return
+;; push identifier orders
+PUSH S1
+XCHG s3
+BLKDROP 3
+;; emitting 1 value(s)
+PUSH S1
+EQINT -1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 96
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	STSLICECONST x878d7615
+	PUSH S1
+	UNPAIR
+	XCHG s2
+	STU 32
+	STDICT
+	ENDC
+	PUSHINT 1
+	SENDRAWMSG
+}
+IF
+DROP
+; end function getReversedOrders
+EQINT -1
+PUSHCONT {
+	CALL $c7_to_c4$
+}
+IF
+TRUE
+SETGLOB 7
+
+.globl	getReversedOrders_internal
+.type	getReversedOrders_internal, @function
+;; param: dbId
+; function getReversedOrders
+;; ret param: orders
+PUSHINT 0
+NEWDICT
+PAIR
+;; push identifier dbId
+PUSH S1
+;; get member length
+;; push identifier swapReversedDB
+GETGLOB 14
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+;; map.min
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S1
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTMINREF
+PUSHCONT {
+	SWAP
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	LDU 256
+	PLDU 256
+	TUPLE 11
+	TUPLE 2
+}
+PUSHCONT {
+	NULL
+}
+IFELSE
+;; decl: minPair
+;; if
+;; push identifier minPair
+DUP
+ISNULL
+PUSHCONT {
+	;; push identifier minPair
+	DUP
+	DUP
+	ISNULL
+	THROWIF 63
+	UNTUPLE 2
+	;; decl: key
+	;; decl: value
+	;; if
+	;; !
+	;; get member confirmed
+	;; push identifier value
+	DUP
+	INDEX 0
+	PUSHCONT {
+		; expValue
+		PUSH S3
+		; end expValue
+		;; push identifier key
+		PUSH S2
+		;; array.push(..)
+		SWAP
+		UNPAIR
+		PUSH S1
+		INC
+		XCHG s3
+		ROTREV
+		PUSHINT 32
+		DICTUSET
+		PAIR
+		; colValue
+		POP s4
+		; end colValue
+	}
+	IFNOT
+	;; end if
+	; while
+	FALSE ; decl return flag
+	PUSHCONT {
+		DUP
+		LESSINT 2
+		DUP
+		PUSHCONT {
+			DROP
+			TRUE
+		}
+		IF
+	}
+	PUSHCONT {
+		;; map.next
+		;; push identifier key
+		PUSH S2
+		;; get member orders
+		;; index
+		;; push identifier dbId
+		PUSH S6
+		;; push identifier swapReversedDB
+		GETGLOB 14
+		INDEX 1
+		PUSHINT 32
+		DICTUGET
+		THROWIFNOT 50
+		PLDDICT
+		PUSHINT 267
+		DICTGETNEXT
+		PUSHCONT {
+			SWAP
+			LDREFRTOS
+			NIP
+			LDREF
+			LDREF
+			LDI 1
+			LDU 32
+			LDU 256
+			LDU 256
+			LDU 256
+			PLDU 32
+			BLKSWAP 1, 7
+			CTOS
+			LDU 256
+			LDU 256
+			BLKSWAP 1, 9
+			CTOS
+			LDU 256
+			PLDU 256
+			TUPLE 11
+			TUPLE 2
+		}
+		PUSHCONT {
+			NULL
+		}
+		IFELSE
+		;; decl: nextPair
+		;; if
+		FALSE ; decl return flag
+		;; push identifier nextPair
+		PUSH S1
+		ISNULL
+		NOT
+		PUSHCONT {
+			;; push identifier nextPair
+			PUSH S1
+			DUP
+			ISNULL
+			THROWIF 63
+			UNTUPLE 2
+			;; decl: nextKey
+			;; decl: nextValue
+			;; if
+			;; !
+			;; get member confirmed
+			;; push identifier nextValue
+			DUP
+			INDEX 0
+			PUSHCONT {
+				; expValue
+				PUSH S8
+				; end expValue
+				;; push identifier nextKey
+				PUSH S2
+				;; array.push(..)
+				SWAP
+				UNPAIR
+				PUSH S1
+				INC
+				XCHG s3
+				ROTREV
+				PUSHINT 32
+				DICTUSET
+				PAIR
+				; colValue
+				POP s9
+				; end colValue
+			}
+			IFNOT
+			;; end if
+			; expValue
+			; end expValue
+			;; push identifier nextKey
+			PUSH S1
+			; colValue
+			POP s7
+			; end colValue
+			DROP2
+		}
+		PUSHCONT {
+			;; break
+			BLKDROP 3
+			PUSHINT 2
+			RET
+		}
+		IFELSE
+		DUP
+		IFRET
+		DROP
+		;; end if
+		DROP
+	}
+	WHILE
+	DROP
+	; end while
+	DROP2
+}
+IFNOT
+;; end if
+;; return
+;; push identifier orders
+PUSH S1
+XCHG s3
+BLKDROP 3
+; end function getReversedOrders
+
+.globl	getDirectOrder
+.public	getDirectOrder
+.type	getDirectOrder, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode dbId
+LDU 32
+; Decode initiatorAddress
+LDMSGADDR
+ENDS
+;; param: dbId
+;; param: initiatorAddress
+; function getDirectOrder
+;; ret param: order
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+PUSHINT 0
+TUPLE 10
+;; push identifier dbId
+PUSH S2
+;; get member length
+;; push identifier swapDirectDB
+GETGLOB 13
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+; expValue
+; end expValue
+;; index
+;; push identifier initiatorAddress
+PUSH S1
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S3
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	PLDU 256
+	TUPLE 10
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	TUPLE 10
+}
+IFELSE
+; colValue
+NIP
+; end colValue
+;; returning named params
+ROTREV
+DROP2
+;; emitting 1 value(s)
+PUSH S1
+EQINT -1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 96
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 1
+	NEWC
+	STSLICECONST xe21a1913
+	PUSH S2
+	UNTUPLE 10
+	BLKSWAP 1, 10
+	PUSH S10
+	STIR 1
+	PUSH S9
+	STUR 32
+	PUSH S8
+	STUR 256
+	PUSH S7
+	STUR 256
+	PUSH S6
+	STUR 256
+	PUSH S5
+	STUR 32
+	NEWC
+	PUSH S5
+	STUR 256
+	PUSH S4
+	STUR 256
+	PUSH S3
+	STSLICER
+	NEWC
+	PUSH S3
+	STUR 256
+	BLKDROP2 10, 3
+	STBREFR
+	STBREFR
+	STBREFR
+	ENDC
+	PUSHINT 1
+	SENDRAWMSG
+}
+IF
+DROP
+; end function getDirectOrder
+EQINT -1
+PUSHCONT {
+	CALL $c7_to_c4$
+}
+IF
+TRUE
+SETGLOB 7
+
+.globl	getDirectOrder_internal
+.type	getDirectOrder_internal, @function
+;; param: dbId
+;; param: initiatorAddress
+; function getDirectOrder
+;; ret param: order
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+PUSHINT 0
+TUPLE 10
+;; push identifier dbId
+PUSH S2
+;; get member length
+;; push identifier swapDirectDB
+GETGLOB 13
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+; expValue
+; end expValue
+;; index
+;; push identifier initiatorAddress
+PUSH S1
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S3
+;; push identifier swapDirectDB
+GETGLOB 13
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	PLDU 256
+	TUPLE 10
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	TUPLE 10
+}
+IFELSE
+; colValue
+NIP
+; end colValue
+;; returning named params
+ROTREV
+DROP2
+; end function getDirectOrder
+
+.globl	getReversedOrder
+.public	getReversedOrder
+.type	getReversedOrder, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode dbId
+LDU 32
+; Decode initiatorAddress
+LDMSGADDR
+ENDS
+;; param: dbId
+;; param: initiatorAddress
+; function getReversedOrder
+;; ret param: order
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+PUSHINT 0
+PUSHINT 0
+TUPLE 11
+;; push identifier dbId
+PUSH S2
+;; get member length
+;; push identifier swapReversedDB
+GETGLOB 14
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+; expValue
+; end expValue
+;; index
+;; push identifier initiatorAddress
+PUSH S1
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S3
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	LDU 256
+	PLDU 256
+	TUPLE 11
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 11
+}
+IFELSE
+; colValue
+NIP
+; end colValue
+;; returning named params
+ROTREV
+DROP2
+;; emitting 1 value(s)
+PUSH S1
+EQINT -1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 96
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 1
+	NEWC
+	STSLICECONST xcf09d885
+	PUSH S2
+	UNTUPLE 11
+	BLKSWAP 1, 11
+	PUSH S11
+	STIR 1
+	PUSH S10
+	STUR 32
+	PUSH S9
+	STUR 256
+	PUSH S8
+	STUR 256
+	PUSH S7
+	STUR 256
+	PUSH S6
+	STUR 32
+	NEWC
+	PUSH S6
+	STUR 256
+	PUSH S5
+	STUR 256
+	PUSH S4
+	STSLICER
+	NEWC
+	PUSH S4
+	STUR 256
+	PUSH S3
+	STUR 256
+	BLKDROP2 11, 3
+	STBREFR
+	STBREFR
+	STBREFR
+	ENDC
+	PUSHINT 1
+	SENDRAWMSG
+}
+IF
+DROP
+; end function getReversedOrder
+EQINT -1
+PUSHCONT {
+	CALL $c7_to_c4$
+}
+IF
+TRUE
+SETGLOB 7
+
+.globl	getReversedOrder_internal
+.type	getReversedOrder_internal, @function
+;; param: dbId
+;; param: initiatorAddress
+; function getReversedOrder
+;; ret param: order
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+PUSHINT 0
+PUSHINT 0
+TUPLE 11
+;; push identifier dbId
+PUSH S2
+;; get member length
+;; push identifier swapReversedDB
+GETGLOB 14
+FIRST
+;; <
+LESS
+THROWIFNOT 112
+; expValue
+; end expValue
+;; index
+;; push identifier initiatorAddress
+PUSH S1
+;; get member orders
+;; index
+;; push identifier dbId
+PUSH S3
+;; push identifier swapReversedDB
+GETGLOB 14
+INDEX 1
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+PLDDICT
+PUSHINT 267
+DICTGETREF
+PUSHCONT {
+	CTOS
+	LDREF
+	LDREF
+	LDI 1
+	LDU 32
+	LDU 256
+	LDU 256
+	LDU 256
+	PLDU 32
+	BLKSWAP 1, 7
+	CTOS
+	LDU 256
+	LDU 256
+	BLKSWAP 1, 9
+	CTOS
+	LDU 256
+	PLDU 256
+	TUPLE 11
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHINT 0
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 11
+}
+IFELSE
+; colValue
+NIP
+; end colValue
+;; returning named params
+ROTREV
+DROP2
+; end function getReversedOrder
+
+.globl	getHash
+.public	getHash
+.type	getHash, @function
+; Decode input parameters
+; Decode secret
+LDREF
+ENDS
+;; param: secret
+; function getHash
+;; ret param: hash
+PUSHINT 0
+;; push identifier secret
+PUSH S1
+CTOS
+SHA256U
+; expValue
+; end expValue
+; colValue
+NIP
+; end colValue
+;; returning named params
+SWAP
+DROP
+;; emitting 1 value(s)
+PUSH S1
+EQINT -1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 96
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	STSLICECONST xc52d351e
+	PUSH S1
+	STUR 256
+	ENDC
+	PUSHINT 1
+	SENDRAWMSG
+}
+IF
+DROP
+; end function getHash
+EQINT -1
+PUSHCONT {
+	CALL $c7_to_c4$
+}
+IF
+TRUE
+SETGLOB 7
+
+.globl	getHash_internal
+.type	getHash_internal, @function
+;; param: secret
+; function getHash
+;; ret param: hash
+PUSHINT 0
+;; push identifier secret
+PUSH S1
+CTOS
+SHA256U
+; expValue
+; end expValue
+; colValue
+NIP
+; end colValue
+;; returning named params
+SWAP
+DROP
+; end function getHash
+
+.globl	c7_to_c4
+.type	c7_to_c4, @function
+GETGLOB 2
+NEWC
+STU 256
+GETGLOB 3
+STUR 64
+GETGLOB 6
+STUR 1
+GETGLOB 10
+GETGLOB 11
+GETGLOB 12
+GETGLOB 13
+UNTUPLE 2
+GETGLOB 14
+UNTUPLE 2
+REVERSE 8, 0
+STDICT
+STU 256
+STU 256
+STU 32
+STDICT
+STU 32
+STDICT
+ENDC
+POP C4
+
+.globl	c4_to_c7
+.type	c4_to_c7, @function
+PUSHROOT
+CTOS        ; c4
+LDU 256      ; pubkey c4
+LDU 64      ; pubkey timestamp c4
+LDU 1       ; pubkey [timestamp] constructor_flag memory
+LDDICT
+LDU 256
+LDU 256
+LDU 32
+LDDICT
+ROTREV
+PAIR
+SETGLOB 13
+LDU 32
+PLDDICT
+PAIR
+SETGLOB 14
+SETGLOB 12
+SETGLOB 11
+SETGLOB 10
+TRUE
+SETGLOB 1   ; pubkey [timestamp] constructor_flag
+SETGLOB 6   ; pubkey [timestamp]
+SETGLOB 3   ; D
+SETGLOB 2
+
+.macro c4_to_c7_with_init_storage
+PUSHROOT
+CTOS        ; c4
+DUP        ; c4 c4
+SBITS      ; c4 bits
+GTINT 1    ; c4 bits>1
+PUSHCONT {
+	LDU 256      ; pubkey c4
+	LDU 64      ; pubkey timestamp c4
+	LDU 1       ; pubkey [timestamp] constructor_flag memory
+	LDDICT
+	LDU 256
+	LDU 256
+	LDU 32
+	LDDICT
+	ROTREV
+	PAIR
+	SETGLOB 13
+	LDU 32
+	PLDDICT
+	PAIR
+	SETGLOB 14
+	SETGLOB 12
+	SETGLOB 11
+	SETGLOB 10
+	TRUE
+	SETGLOB 1   ; pubkey [timestamp] constructor_flag
+	SETGLOB 6   ; pubkey [timestamp]
+	SETGLOB 3   ; D
+	SETGLOB 2
+}
+PUSHCONT {
+	PLDDICT   ; D
+	; init participantDB
+	NEWDICT
+	SETGLOB 10
+	; init SWAP_ETH_SMC_ADDRESS
+	PUSHINT 0
+	SETGLOB 11
+	; init SWAP_ETH_TOKEN_SMC_ADDRESS
+	PUSHINT 0
+	SETGLOB 12
+	; init swapDirectDB
+	PUSHINT 0
+	NEWDICT
+	PAIR
+	SETGLOB 13
+	; init swapReversedDB
+	PUSHINT 0
+	NEWDICT
+	PAIR
+	SETGLOB 14
+	; set contract pubkey
+	PUSHINT 0
+	SWAP
+	PUSHINT 64
+	DICTUGET
+	THROWIFNOT 61
+	PLDU 256
+	SETGLOB 2
+	PUSHINT 0 ; timestamp
+	SETGLOB 3
+	PUSHINT 0 ; constructor_flag
+	SETGLOB 6
+	TRUE
+	SETGLOB 1
+	;; init state var: SWAP_ETH_SMC_ADDRESS
+	PUSHINT 0
+	SETGLOB 11
+	;; init state var: SWAP_ETH_TOKEN_SMC_ADDRESS
+	PUSHINT 0
+	SETGLOB 12
+}
+IFELSE
+
+.internal-alias :main_internal,        0
+.internal	:main_internal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Function: main_internal
+;; param: contract_balance
+;; param: msg_balance
+;; param: int_msg_info
+;; param: msg_body_slice
+PUSHINT 0  ; main_external trans id
+PUSH S2
+CTOS
+LDSLICE 3
+NIP
+LDI 1     ; bounced tail
+LDMSGADDR   ; bounced src tail
+DROP
+SETGLOB 9
+PUSHCONT {
+	PUSH S1
+	LDSLICE 32
+	NIP
+}
+IFJMP
+PUSH S1    ; body
+SEMPTY     ; isEmpty
+PUSHCONT {
+	PUSHINT 1
+	CALL 1
+	CALL $c4_to_c7$
+	; function receive
+	;; get member sender
+	GETGLOB 9
+	;; decl: sender
+	;; get member value
+	CALL $message_balance_macro$
+	;; decl: value
+	;; get member value
+	CALL $message_balance_macro$
+	PUSHINT 1000000000
+	;; >
+	GREATER
+	THROWIFNOT 102
+	PUSHINT 1000000000
+	; expValue
+	PUSH S1
+	; end expValue
+	SWAP
+	SUB
+	UFITS 256
+	; colValue
+	NIP
+	; end colValue
+	;; map.exists
+	;; push identifier sender
+	PUSH S1
+	;; push identifier participantDB
+	GETGLOB 10
+	PUSHINT 267
+	DICTGETREF
+	DUP
+	PUSHCONT {
+		NIP
+	}
+	IF
+	;; decl: exists
+	;; if
+	;; push identifier exists
+	DUP
+	PUSHCONT {
+		;; index
+		;; push identifier sender
+		PUSH S2
+		;; push identifier participantDB
+		GETGLOB 10
+		PUSHINT 267
+		DICTGETREF
+		PUSHCONT {
+			CTOS
+			LDU 256
+			LDU 256
+			PLDU 256
+			TUPLE 3
+		}
+		PUSHCONT {
+			PUSHINT 0
+			PUSHINT 0
+			PUSHINT 0
+			TUPLE 3
+		}
+		IFELSE
+		;; decl: balance
+		;; get member value
+		;; push identifier balance
+		DUP
+		INDEX 0
+		;; push identifier value
+		PUSH S3
+		CALL $add256_internal$
+		; expValue
+		PUSH S1
+		; end expValue
+		SWAP
+		; colValue
+		SETINDEX 0
+		NIP
+		; end colValue
+		; expValue
+		;; fetch participantDB
+		GETGLOB 10
+		;; push identifier sender
+		PUSH S4
+		SWAP
+		; end expValue
+		;; push identifier balance
+		PUSH S2
+		; colValue
+		UNTUPLE 3
+		NEWC
+		PUSH S3
+		STUR 256
+		PUSH S2
+		STUR 256
+		PUSH S1
+		STUR 256
+		XCHG s3
+		BLKDROP 3
+		ENDC
+		ROTREV
+		PUSHINT 267
+		DICTSETREF
+		SETGLOB 10
+		; end colValue
+		DROP
+	}
+	PUSHCONT {
+		;; push identifier value
+		PUSH S1
+		PUSHINT 0
+		;; uint256
+		UFITS 256
+		PUSHINT 0
+		;; uint256
+		UFITS 256
+		TUPLE 3
+		; expValue
+		;; fetch participantDB
+		GETGLOB 10
+		;; push identifier sender
+		PUSH S4
+		SWAP
+		; end expValue
+		ROT
+		; colValue
+		UNTUPLE 3
+		NEWC
+		PUSH S3
+		STUR 256
+		PUSH S2
+		STUR 256
+		PUSH S1
+		STUR 256
+		XCHG s3
+		BLKDROP 3
+		ENDC
+		ROTREV
+		PUSHINT 267
+		DICTSETREF
+		SETGLOB 10
+		; end colValue
+	}
+	IFELSE
+	;; end if
+	BLKDROP 3
+	; end function receive
+	CALL $c7_to_c4$
+}
+IFJMP
+PUSH S1            ; body
+LDUQ 32            ; [funcId] body' ok
+PUSHCONT {
+	PUSHINT 1
+	CALL 1
+	CALL $c4_to_c7$
+	; function fallback
+	PUSHSLICE x54686520696e626f756e64206d6573736167652068617320696e76616c69642066756e6374696f6e206964
+	NEWC
+	STSLICE
+	ENDC
+	THROWARG 101
+	; end function fallback
+	CALL $c7_to_c4$
+}
+IFNOTJMP
+PUSH2 S1,S1        ; funcId body' funcId funcId
+PUSHCONT {
+	PUSHINT 1
+	CALL 1
+	CALL $c4_to_c7$
+	; function receive
+	;; get member sender
+	GETGLOB 9
+	;; decl: sender
+	;; get member value
+	CALL $message_balance_macro$
+	;; decl: value
+	;; get member value
+	CALL $message_balance_macro$
+	PUSHINT 1000000000
+	;; >
+	GREATER
+	THROWIFNOT 102
+	PUSHINT 1000000000
+	; expValue
+	PUSH S1
+	; end expValue
+	SWAP
+	SUB
+	UFITS 256
+	; colValue
+	NIP
+	; end colValue
+	;; map.exists
+	;; push identifier sender
+	PUSH S1
+	;; push identifier participantDB
+	GETGLOB 10
+	PUSHINT 267
+	DICTGETREF
+	DUP
+	PUSHCONT {
+		NIP
+	}
+	IF
+	;; decl: exists
+	;; if
+	;; push identifier exists
+	DUP
+	PUSHCONT {
+		;; index
+		;; push identifier sender
+		PUSH S2
+		;; push identifier participantDB
+		GETGLOB 10
+		PUSHINT 267
+		DICTGETREF
+		PUSHCONT {
+			CTOS
+			LDU 256
+			LDU 256
+			PLDU 256
+			TUPLE 3
+		}
+		PUSHCONT {
+			PUSHINT 0
+			PUSHINT 0
+			PUSHINT 0
+			TUPLE 3
+		}
+		IFELSE
+		;; decl: balance
+		;; get member value
+		;; push identifier balance
+		DUP
+		INDEX 0
+		;; push identifier value
+		PUSH S3
+		CALL $add256_internal$
+		; expValue
+		PUSH S1
+		; end expValue
+		SWAP
+		; colValue
+		SETINDEX 0
+		NIP
+		; end colValue
+		; expValue
+		;; fetch participantDB
+		GETGLOB 10
+		;; push identifier sender
+		PUSH S4
+		SWAP
+		; end expValue
+		;; push identifier balance
+		PUSH S2
+		; colValue
+		UNTUPLE 3
+		NEWC
+		PUSH S3
+		STUR 256
+		PUSH S2
+		STUR 256
+		PUSH S1
+		STUR 256
+		XCHG s3
+		BLKDROP 3
+		ENDC
+		ROTREV
+		PUSHINT 267
+		DICTSETREF
+		SETGLOB 10
+		; end colValue
+		DROP
+	}
+	PUSHCONT {
+		;; push identifier value
+		PUSH S1
+		PUSHINT 0
+		;; uint256
+		UFITS 256
+		PUSHINT 0
+		;; uint256
+		UFITS 256
+		TUPLE 3
+		; expValue
+		;; fetch participantDB
+		GETGLOB 10
+		;; push identifier sender
+		PUSH S4
+		SWAP
+		; end expValue
+		ROT
+		; colValue
+		UNTUPLE 3
+		NEWC
+		PUSH S3
+		STUR 256
+		PUSH S2
+		STUR 256
+		PUSH S1
+		STUR 256
+		XCHG s3
+		BLKDROP 3
+		ENDC
+		ROTREV
+		PUSHINT 267
+		DICTSETREF
+		SETGLOB 10
+		; end colValue
+	}
+	IFELSE
+	;; end if
+	BLKDROP 3
+	; end function receive
+	CALL $c7_to_c4$
+}
+IFNOTJMP
+LESSINT 3            ; funcId body' funcId<3
+PUSH S2              ; funcId body' funcId<3 funcId
+PUSHINT 4294967293   ; funcId body' funcId<3 funcId 4294967293
+GREATER              ; funcId body' funcId<3 funcId>4294967293
+OR                   ; funcId body' funcId<3||funcId>4294967293
+PUSHCONT {
+	PUSHINT 1
+	CALL 1
+	CALL $c4_to_c7$
+	; function fallback
+	PUSHSLICE x54686520696e626f756e64206d6573736167652068617320696e76616c69642066756e6374696f6e206964
+	NEWC
+	STSLICE
+	ENDC
+	THROWARG 101
+	; end function fallback
+	CALL $c7_to_c4$
+}
+IFJMP
+SWAP  ; body' funcId
+CALL 1
+GETGLOB 7
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+	; function fallback
+	PUSHSLICE x54686520696e626f756e64206d6573736167652068617320696e76616c69642066756e6374696f6e206964
+	NEWC
+	STSLICE
+	ENDC
+	THROWARG 101
+	; end function fallback
+	CALL $c7_to_c4$
+}
+IF
+
+.internal-alias :main_external,        -1
+.internal	:main_external
+PUSHINT -1 ; main_external trans id
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SETGLOB 9
+PUSH S1
+CALL $c4_to_c7_with_init_storage$
+LDU 1 ; haveSign msgSlice
+SWAP
+PUSHCONT {
+	PUSHINT 512
+	LDSLICEX ; signatureSlice msgSlice
+	DUP      ; signatureSlice msgSlice msgSlice
+	HASHSU   ; signatureSlice msgSlice hashMsgSlice
+	ROT
+	GETGLOB 2
+	CHKSIGNU      ; msgSlice isSigned
+	THROWIFNOT 40 ; msgSlice
+}
+IF
+LDU 64                         ; timestamp msgSlice
+SWAP                           ; msgSlice timestamp
+CALL $replay_protection_macro$ ; msgSlice
+LDU  32 ; funcId body
+PUSH S1 ; funcId body funcId
+LESSINT 3            ; funcId body' funcId<3
+PUSH S2              ; funcId body' funcId<3 funcId
+PUSHINT 4294967293   ; funcId body' funcId<3 funcId 4294967293
+GREATER              ; funcId body' funcId<3 funcId>4294967293
+OR                   ; funcId body' funcId<3||funcId>4294967293
+PUSHCONT {
+	PUSHINT 1
+	CALL 1
+	CALL $c4_to_c7$
+	; function fallback
+	PUSHSLICE x54686520696e626f756e64206d6573736167652068617320696e76616c69642066756e6374696f6e206964
+	NEWC
+	STSLICE
+	ENDC
+	THROWARG 101
+	; end function fallback
+	CALL $c7_to_c4$
+}
+IFJMP
+SWAP    ; body funcId
+CALL 1
+GETGLOB 7
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+	; function fallback
+	PUSHSLICE x54686520696e626f756e64206d6573736167652068617320696e76616c69642066756e6374696f6e206964
+	NEWC
+	STSLICE
+	ENDC
+	THROWARG 101
+	; end function fallback
+	CALL $c7_to_c4$
+}
+IF
+
