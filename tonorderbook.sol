@@ -205,16 +205,16 @@ contract TonSwapOrderbook {
     // hash(secret)
     bytes32 secretHash;
     // initiator Foreign token Address
-    // 256 bits is essential for Ethereum and Bitcoin
-    uint256 initiatorTargetAddress;
+    // 33 bytes is essential for Ethereum and Bitcoin
+    bytes[33] initiatorTargetAddress;
     
     /* part for order confirmator */
     
     // Confirmator TON address
     address confirmatorTargetAddress;
     // Confirmator Foreign token source Address
-    // 256 bits is essential for Ethereum and Bitcoin
-    uint256 confirmatorSourceAddress;
+    // 33 bytes is essential for Ethereum and Bitcoin
+    bytes[33] confirmatorSourceAddress;
   }
 
   struct SwapReversedOrder {
@@ -236,8 +236,8 @@ contract TonSwapOrderbook {
     // Time lock slot is seconds
     uint32 timeLockSlot;
     // Initiator Foreign token source Address
-    // 256 bits is essential for Ethereum and Bitcoin
-    uint256 initiatorSourceAddress;
+    // 33 bytes is essential for Ethereum and Bitcoin
+    bytes[33] initiatorSourceAddress;
     
     /* part for order confirmator */
     
@@ -246,8 +246,8 @@ contract TonSwapOrderbook {
     // Confirmator TON address
     address confirmatorSourceAddress;
     // Confirmator Foreign token target Address
-    // 256 bits is essential for Ethereum and Bitcoin
-    uint256 confirmatorTargetAddress;
+    // 33 bytes is essential for Ethereum and Bitcoin
+    bytes[33] confirmatorTargetAddress;
     // hash(secret)
     bytes32 secretHash;
   }
@@ -304,7 +304,7 @@ contract TonSwapOrderbook {
               uint256 exchangeRate,
               uint32 timeLockSlot,
               bytes32 secretHash,
-              uint256 initiatorTargetAddress) external {
+              bytes[33] initiatorTargetAddress) external {
 
     // limit timeLockSlot to prevent time overflow attacks
     require(timeLockSlot >= uint32(TIMELOCK_MIN) && timeLockSlot <= uint32(TIMELOCK_MAX), ERROR_INVALID_TIME_LOCK_SLOT);
@@ -312,7 +312,6 @@ contract TonSwapOrderbook {
     require(value > uint256(0), ERROR_INVALID_VALUE);
     require(minValue > uint256(0) && minValue <= value, ERROR_INVALID_MIN_VALUE);
     require(exchangeRate != uint256(0), ERROR_INVALID_EXCHANGE_RATE);
-    require(initiatorTargetAddress != uint256(0), ERROR_INVALID_FOREIGN_ADDRESS);
     
     address sender = msg.sender;
   
@@ -423,12 +422,11 @@ contract TonSwapOrderbook {
   function confirmDirectOrder(uint32 dbId,
               uint256 value,
               address initiatorAddress,
-              uint256 confirmatorSourceAddress) external {
+              bytes[33] confirmatorSourceAddress) external {
 
     require(value > uint256(0), ERROR_INVALID_VALUE);
     require(initiatorAddress != address(0), ERROR_INVALID_ADDRESS);
-    require(confirmatorSourceAddress != uint256(0), ERROR_INVALID_FOREIGN_ADDRESS);
-  
+
     // Check swap DB existence
     require(dbId < swapDirectDB.length, ERROR_INVALID_DB);
     
@@ -625,7 +623,7 @@ contract TonSwapOrderbook {
               uint256 minValue,
               uint256 exchangeRate,
               uint32 timeLockSlot,
-              uint256 initiatorSourceAddress) external {
+              bytes[33] initiatorSourceAddress) external {
 
     // limit timeLockSlot to prevent time overflow attacks
     require(timeLockSlot >= uint32(TIMELOCK_MIN) && timeLockSlot <= uint32(TIMELOCK_MAX), ERROR_INVALID_TIME_LOCK_SLOT);
@@ -633,7 +631,6 @@ contract TonSwapOrderbook {
     require(value > uint256(0), ERROR_INVALID_VALUE);
     require(minValue > uint256(0) && minValue <= value, ERROR_INVALID_MIN_VALUE);
     require(exchangeRate != uint256(0), ERROR_INVALID_EXCHANGE_RATE);
-    require(initiatorSourceAddress != uint256(0), ERROR_INVALID_FOREIGN_ADDRESS);
     
     address sender = msg.sender;
     
@@ -721,12 +718,11 @@ contract TonSwapOrderbook {
   function confirmReversedOrder(uint32 dbId,
               uint256 value,
               address initiatorAddress,
-              uint256 confirmatorTargetAddress,
+              bytes[33] confirmatorTargetAddress,
               bytes32 secretHash) external {
 
     require(value > uint256(0), ERROR_INVALID_VALUE);
     require(initiatorAddress != address(0), ERROR_INVALID_ADDRESS);
-    require(confirmatorTargetAddress != uint256(0), ERROR_INVALID_FOREIGN_ADDRESS);
     
     // Check swap DB existence
     require(dbId < swapReversedDB.length, ERROR_INVALID_DB);
